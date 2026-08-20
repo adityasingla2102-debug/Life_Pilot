@@ -1,9 +1,10 @@
 import React from 'react';
 import StatusBadge from './StatusBadge.jsx';
-import { getExpiryStatus } from '../data/initialData.jsx';
+import { getExpiryStatus, getRemainingDays } from '../data/initialData.jsx';
 
 export default function WarrantyCard({ warranty, onEdit, onDelete }) {
   const status = getExpiryStatus(warranty.warrantyExpiry);
+  const remainingDays = getRemainingDays(warranty.warrantyExpiry);
 
   return (
     <div style={{
@@ -13,11 +14,11 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
       padding: '28px',
       display: 'flex',
       flexDirection: 'column',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
     }}>
       <div>
-        {/* Top Header Row */}
+        {/* Header Row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{
             width: '44px',
@@ -56,14 +57,21 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '16px' }}>
           {warranty.purchaseDate && (
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-              <span style={{ color: '#737373' }}>Purchased</span>
+              <span style={{ color: '#737373' }}>Purchase Date</span>
               <strong style={{ color: '#222222', fontWeight: 600 }}>{warranty.purchaseDate}</strong>
             </div>
           )}
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-            <span style={{ color: '#737373' }}>Warranty Ends</span>
+            <span style={{ color: '#737373' }}>Warranty Expiry</span>
             <strong style={{ color: '#222222', fontWeight: 700 }}>{warranty.warrantyExpiry || 'N/A'}</strong>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+            <span style={{ color: '#737373' }}>Remaining Days</span>
+            <strong style={{ color: status === 'Expired' ? '#9B1C1C' : '#222222', fontWeight: 700 }}>
+              {status === 'Expired' ? '0 days (Expired)' : `${remainingDays} days`}
+            </strong>
           </div>
 
           {warranty.seller && (
@@ -125,4 +133,3 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
     </div>
   );
 }
-

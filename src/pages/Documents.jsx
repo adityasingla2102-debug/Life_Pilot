@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import StatCard from '../components/StatCard.jsx';
 import DocumentCard from '../components/DocumentCard.jsx';
 import DocumentForm from '../components/DocumentForm.jsx';
+import SearchBox from '../components/SearchBox.jsx';
 import { getExpiryStatus } from '../data/initialData.jsx';
 
 export default function Documents({ documents, setDocuments }) {
@@ -19,14 +20,17 @@ export default function Documents({ documents, setDocuments }) {
   });
 
   const totalDocs = documents.length;
-  const validDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'VALID').length;
-  const expiringDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'EXPIRING SOON').length;
-  const expiredDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'EXPIRED').length;
+  const validDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Active').length;
+  const expiringDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Expiring Soon').length;
+  const expiredDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Expired').length;
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter documents by document name or type
+  const filteredDocuments = useMemo(() => {
+    return documents.filter(doc =>
+      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.type.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [documents, searchTerm]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -117,25 +121,12 @@ export default function Documents({ documents, setDocuments }) {
         <StatCard title="Expired" value={expiredDocs} color="#9B1C1C" />
       </div>
 
-      {/* Search Bar */}
+      {/* Reusable Search Component */}
       <div style={{ marginBottom: '32px' }}>
-        <input
-          type="text"
-          placeholder="🔍 Search documents by name or type..."
+        <SearchBox
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            width: '100%',
-            maxWidth: '480px',
-            height: '50px',
-            padding: '0 22px',
-            borderRadius: '9999px',
-            border: '1px solid #E5E3DA',
-            backgroundColor: '#FFFFFF',
-            outline: 'none',
-            fontSize: '0.9rem',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)'
-          }}
+          placeholder="🔍 Search documents by name or type..."
         />
       </div>
 
@@ -171,5 +162,3 @@ export default function Documents({ documents, setDocuments }) {
     </div>
   );
 }
-
-

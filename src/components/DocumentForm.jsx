@@ -8,6 +8,19 @@ export default function DocumentForm({
   onSubmit,
   onCancel
 }) {
+  const inputStyle = {
+    width: '100%',
+    height: '46px',
+    padding: '0 16px',
+    borderRadius: '12px',
+    border: '1px solid #E5E3DA',
+    backgroundColor: '#FAF9F5',
+    fontSize: '0.88rem',
+    color: '#222222',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+
   return (
     <div style={{
       backgroundColor: '#FFFFFF',
@@ -47,7 +60,7 @@ export default function DocumentForm({
             value={formData.name}
             onChange={onChange}
             placeholder="e.g. Driving Licence"
-            style={{ width: '100%' }}
+            style={inputStyle}
           />
         </div>
 
@@ -59,7 +72,7 @@ export default function DocumentForm({
             name="type"
             value={formData.type}
             onChange={onChange}
-            style={{ width: '100%', backgroundColor: '#FAF9F5' }}
+            style={inputStyle}
           >
             <option value="Identity">Identity</option>
             <option value="Travel">Travel</option>
@@ -78,7 +91,7 @@ export default function DocumentForm({
             name="issueDate"
             value={formData.issueDate}
             onChange={onChange}
-            style={{ width: '100%' }}
+            style={inputStyle}
           />
         </div>
 
@@ -91,7 +104,7 @@ export default function DocumentForm({
             name="expiryDate"
             value={formData.expiryDate}
             onChange={onChange}
-            style={{ width: '100%' }}
+            style={inputStyle}
           />
         </div>
 
@@ -105,7 +118,7 @@ export default function DocumentForm({
             value={formData.notes}
             onChange={onChange}
             placeholder="Optional notes or document number"
-            style={{ width: '100%' }}
+            style={inputStyle}
           />
         </div>
 

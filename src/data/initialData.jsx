@@ -36,9 +36,23 @@ export const INITIAL_WARRANTIES = [
   }
 ];
 
-// Helper function to calculate expiry status (Valid, Expiring Soon, Expired)
+// Calculate remaining days until expiry date
+export const getRemainingDays = (expiryDateStr) => {
+  if (!expiryDateStr) return 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expDate = new Date(expiryDateStr);
+  expDate.setHours(0, 0, 0, 0);
+
+  const diffTime = expDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+};
+
+// Calculate status: Active, Expiring Soon, Expired
 export const getExpiryStatus = (expiryDateStr) => {
-  if (!expiryDateStr) return "VALID";
+  if (!expiryDateStr) return "Active";
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -47,15 +61,15 @@ export const getExpiryStatus = (expiryDateStr) => {
   expDate.setHours(0, 0, 0, 0);
 
   if (expDate < today) {
-    return "EXPIRED";
+    return "Expired";
   }
 
   const diffTime = expDate - today;
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays <= 30) {
-    return "EXPIRING SOON";
+    return "Expiring Soon";
   }
 
-  return "VALID";
+  return "Active";
 };

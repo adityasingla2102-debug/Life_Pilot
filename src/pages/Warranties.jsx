@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import StatCard from '../components/StatCard.jsx';
 import WarrantyCard from '../components/WarrantyCard.jsx';
+import SearchBox from '../components/SearchBox.jsx';
 import { getExpiryStatus } from '../data/initialData.jsx';
 
 export default function Warranties({ warranties, setWarranties }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -19,14 +21,19 @@ export default function Warranties({ warranties, setWarranties }) {
   });
 
   const totalWarranties = warranties.length;
-  const activeWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'VALID').length;
-  const expiringWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'EXPIRING SOON').length;
-  const expiredWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'EXPIRED').length;
+  const activeWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'Active').length;
+  const expiringWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'Expiring Soon').length;
+  const expiredWarranties = warranties.filter(w => getExpiryStatus(w.warrantyExpiry) === 'Expired').length;
 
-  const filteredWarranties = warranties.filter(w =>
-    w.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    w.seller.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter warranties based on product name and selected status filter
+  const filteredWarranties = useMemo(() => {
+    return warranties.filter(w => {
+      const status = getExpiryStatus(w.warrantyExpiry);
+      const matchesSearch = w.productName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'All' || status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [warranties, searchTerm, statusFilter]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +88,19 @@ export default function Warranties({ warranties, setWarranties }) {
     setFormData({ productName: '', category: 'Electronics', purchaseDate: '', warrantyExpiry: '', seller: '', notes: '' });
   };
 
+  const inputStyle = {
+    width: '100%',
+    height: '46px',
+    padding: '0 16px',
+    borderRadius: '12px',
+    border: '1px solid #E5E3DA',
+    backgroundColor: '#FAF9F5',
+    fontSize: '0.88rem',
+    color: '#222222',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+
   return (
     <div style={{ padding: '40px 48px', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Header */}
@@ -118,26 +138,34 @@ export default function Warranties({ warranties, setWarranties }) {
         <StatCard title="Expired" value={expiredWarranties} color="#9B1C1C" />
       </div>
 
-      {/* Search Input Bar */}
-      <div style={{ marginBottom: '32px' }}>
-        <input
-          type="text"
-          placeholder="🔍 Search warranties by product name or seller..."
+      {/* Search & Status Filter Section */}
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '32px' }}>
+        <SearchBox
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            width: '100%',
-            maxWidth: '480px',
-            height: '50px',
-            padding: '0 22px',
-            borderRadius: '9999px',
-            border: '1px solid #E5E3DA',
-            backgroundColor: '#FFFFFF',
-            outline: 'none',
-            fontSize: '0.9rem',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)'
-          }}
+          placeholder="🔍 Search by product name..."
         />
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {['All', 'Active', 'Expiring Soon', 'Expired'].map(filterOption => (
+            <button
+              key={filterOption}
+              onClick={() => setStatusFilter(filterOption)}
+              style={{
+                padding: '8px 18px',
+                borderRadius: '9999px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                backgroundColor: statusFilter === filterOption ? '#222222' : '#FFFFFF',
+                color: statusFilter === filterOption ? '#FFFFFF' : '#737373',
+                border: '1px solid #E5E3DA',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {filterOption}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Form Modal */}
@@ -169,7 +197,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 value={formData.productName}
                 onChange={handleInputChange}
                 placeholder="e.g. Laptop"
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -179,7 +207,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                style={{ width: '100%', backgroundColor: '#FAF9F5' }}
+                style={inputStyle}
               >
                 <option value="Electronics">Electronics</option>
                 <option value="Mobile">Mobile & Tablets</option>
@@ -196,7 +224,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 name="purchaseDate"
                 value={formData.purchaseDate}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -207,7 +235,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 name="warrantyExpiry"
                 value={formData.warrantyExpiry}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -219,7 +247,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 value={formData.seller}
                 onChange={handleInputChange}
                 placeholder="e.g. Apple Store, Amazon"
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -231,7 +259,7 @@ export default function Warranties({ warranties, setWarranties }) {
                 value={formData.notes}
                 onChange={handleInputChange}
                 placeholder="Optional notes or invoice number"
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -257,7 +285,7 @@ export default function Warranties({ warranties, setWarranties }) {
       {/* Grid List */}
       {filteredWarranties.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px', backgroundColor: '#FFFFFF', borderRadius: '24px', color: '#737373', border: '1px solid #E5E3DA' }}>
-          No warranties found. Click "+ Add Warranty" to register one.
+          No warranties found matching search or filter criteria.
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
@@ -274,4 +302,3 @@ export default function Warranties({ warranties, setWarranties }) {
     </div>
   );
 }
-

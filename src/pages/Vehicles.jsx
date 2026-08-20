@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import StatCard from '../components/StatCard.jsx';
 import VehicleCard from '../components/VehicleCard.jsx';
+import SearchBox from '../components/SearchBox.jsx';
 import { getExpiryStatus } from '../data/initialData.jsx';
 
 export default function Vehicles({ vehicles, setVehicles }) {
@@ -20,14 +21,17 @@ export default function Vehicles({ vehicles, setVehicles }) {
   });
 
   const totalVehicles = vehicles.length;
-  const serviceDueCount = vehicles.filter(v => getExpiryStatus(v.serviceDate) === 'EXPIRING SOON' || getExpiryStatus(v.serviceDate) === 'EXPIRED').length;
-  const insuranceExpiringCount = vehicles.filter(v => getExpiryStatus(v.insuranceExpiry) === 'EXPIRING SOON' || getExpiryStatus(v.insuranceExpiry) === 'EXPIRED').length;
-  const pucExpiringCount = vehicles.filter(v => getExpiryStatus(v.pucExpiry) === 'EXPIRING SOON' || getExpiryStatus(v.pucExpiry) === 'EXPIRED').length;
+  const serviceDueCount = vehicles.filter(v => getExpiryStatus(v.serviceDate) === 'Expiring Soon' || getExpiryStatus(v.serviceDate) === 'Expired').length;
+  const insuranceExpiringCount = vehicles.filter(v => getExpiryStatus(v.insuranceExpiry) === 'Expiring Soon' || getExpiryStatus(v.insuranceExpiry) === 'Expired').length;
+  const pucExpiringCount = vehicles.filter(v => getExpiryStatus(v.pucExpiry) === 'Expiring Soon' || getExpiryStatus(v.pucExpiry) === 'Expired').length;
 
-  const filteredVehicles = vehicles.filter(v =>
-    v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.vehicleNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter vehicles by vehicle name or vehicle number
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter(v =>
+      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.vehicleNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [vehicles, searchTerm]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -83,6 +87,19 @@ export default function Vehicles({ vehicles, setVehicles }) {
     setFormData({ name: '', vehicleNumber: '', type: 'Car', purchaseDate: '', serviceDate: '', insuranceExpiry: '', pucExpiry: '' });
   };
 
+  const inputStyle = {
+    width: '100%',
+    height: '46px',
+    padding: '0 16px',
+    borderRadius: '12px',
+    border: '1px solid #E5E3DA',
+    backgroundColor: '#FAF9F5',
+    fontSize: '0.88rem',
+    color: '#222222',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+
   return (
     <div style={{ padding: '40px 48px', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Header */}
@@ -120,25 +137,12 @@ export default function Vehicles({ vehicles, setVehicles }) {
         <StatCard title="PUC Expiring" value={pucExpiringCount} color="#9B1C1C" />
       </div>
 
-      {/* Search Input Bar */}
+      {/* Search Component */}
       <div style={{ marginBottom: '32px' }}>
-        <input
-          type="text"
-          placeholder="🔍 Search vehicles by name or vehicle number..."
+        <SearchBox
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            width: '100%',
-            maxWidth: '480px',
-            height: '50px',
-            padding: '0 22px',
-            borderRadius: '9999px',
-            border: '1px solid #E5E3DA',
-            backgroundColor: '#FFFFFF',
-            outline: 'none',
-            fontSize: '0.9rem',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)'
-          }}
+          placeholder="🔍 Search vehicles by name or vehicle number..."
         />
       </div>
 
@@ -171,7 +175,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="e.g. Honda City"
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -183,7 +187,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 value={formData.vehicleNumber}
                 onChange={handleInputChange}
                 placeholder="e.g. KA01 AB 1234"
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -193,7 +197,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                style={{ width: '100%', backgroundColor: '#FAF9F5' }}
+                style={inputStyle}
               >
                 <option value="Car">Car</option>
                 <option value="Bike">Bike / Scooter</option>
@@ -209,7 +213,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 name="purchaseDate"
                 value={formData.purchaseDate}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -220,7 +224,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 name="serviceDate"
                 value={formData.serviceDate}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -231,7 +235,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 name="insuranceExpiry"
                 value={formData.insuranceExpiry}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -242,7 +246,7 @@ export default function Vehicles({ vehicles, setVehicles }) {
                 name="pucExpiry"
                 value={formData.pucExpiry}
                 onChange={handleInputChange}
-                style={{ width: '100%' }}
+                style={inputStyle}
               />
             </div>
 
@@ -285,4 +289,3 @@ export default function Vehicles({ vehicles, setVehicles }) {
     </div>
   );
 }
-
