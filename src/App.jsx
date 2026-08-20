@@ -1,210 +1,494 @@
 import React, { useState } from 'react';
-import Bills from './components/Bills.jsx';
-import Subscriptions from './components/Subscriptions.jsx';
-import Appointments from './components/Appointments.jsx';
-
-// ==========================================================
-// LIFEADMIN — MAIN APP CONTAINER (PERSON 3)
-// ==========================================================
-// Theme:
-// Background: Cream / Off-white (#faf9f5)
-// Cards: White (#ffffff) with rounded corners & subtle shadows
-// Accent: Soft Yellow / Amber (#f59e0b)
-// Text: Dark (#1e293b)
-// ==========================================================
 
 function App() {
-  // Current active view state: 'bills' | 'subscriptions' | 'appointments'
-  const [activeTab, setActiveTab] = useState('bills');
+  // ==========================================
+  // 1. STATE MANAGEMENT
+  // ==========================================
+  
+  // Bills data state
+  const [bills, setBills] = useState([
+    {
+      id: 1,
+      name: "Electricity Bill",
+      category: "Utilities",
+      amount: 2450,
+      dueDate: "2026-08-25",
+      status: "Pending"
+    },
+    {
+      id: 2,
+      name: "Fiber Broadband",
+      category: "Internet",
+      amount: 999,
+      dueDate: "2026-08-10",
+      status: "Paid"
+    },
+    {
+      id: 3,
+      name: "House Rent",
+      category: "Housing",
+      amount: 12000,
+      dueDate: "2026-08-01",
+      status: "Overdue"
+    }
+  ]);
 
-  // Inline container styles
-  const appContainerStyle = {
+  // Form handling states
+  const [editingBillId, setEditingBillId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    amount: "",
+    dueDate: "",
+    status: "Pending"
+  });
+
+  // UI state for hover effects
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+  const [hoveredBtnId, setHoveredBtnId] = useState(null);
+
+  // ==========================================
+  // 2. DERIVED DATA (STATISTICS)
+  // ==========================================
+  const totalBills = bills.length;
+  const pendingCount = bills.filter(bill => bill.status === "Pending").length;
+  const paidCount = bills.filter(bill => bill.status === "Paid").length;
+  const overdueCount = bills.filter(bill => bill.status === "Overdue").length;
+  const currentMonthSpending = bills
+    .filter(bill => bill.status === "Paid")
+    .reduce((sum, bill) => sum + Number(bill.amount), 0);
+
+  // ==========================================
+  // 3. CRUD HANDLERS
+  // ==========================================
+  
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSaveBill = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.amount || !formData.dueDate) {
+      alert("Please fill out Name, Amount, and Due Date.");
+      return;
+    }
+
+    if (editingBillId !== null) {
+      // UPDATE: Use map() to update the bill with the matching ID
+      setBills(
+        bills.map((bill) =>
+          bill.id === editingBillId
+            ? { ...formData, id: editingBillId, amount: Number(formData.amount) }
+            : bill
+        )
+      );
+      setEditingBillId(null);
+    } else {
+      // CREATE: Spread operator to add a new bill
+      const newBill = {
+        ...formData,
+        id: Date.now(),
+        amount: Number(formData.amount)
+      };
+      setBills([...bills, newBill]);
+    }
+
+    // Reset form
+    setFormData({
+      name: "",
+      category: "",
+      amount: "",
+      dueDate: "",
+      status: "Pending"
+    });
+  };
+
+  const handleEditBill = (bill) => {
+    setEditingBillId(bill.id);
+    setFormData({
+      name: bill.name,
+      category: bill.category,
+      amount: bill.amount,
+      dueDate: bill.dueDate,
+      status: bill.status
+    });
+  };
+
+  const handleDeleteBill = (id) => {
+    // DELETE: Use filter() to keep all bills EXCEPT the one being deleted
+    setBills(bills.filter((bill) => bill.id !== id));
+  };
+
+  const handleCancelEdit = () => {
+    setEditingBillId(null);
+    setFormData({
+      name: "",
+      category: "",
+      amount: "",
+      dueDate: "",
+      status: "Pending"
+    });
+  };
+
+  // ==========================================
+  // 4. INLINE STYLES (UI REDESIGN)
+  // ==========================================
+  
+  const colors = {
+    bgCream: "#F7F5EF",
+    cardWhite: "#FFFFFF",
+    textMain: "#1F2937",
+    textMuted: "#6B7280",
+    primary: "#111827",
+    border: "#E5E7EB",
+    paidBg: "#D1FAE5", paidText: "#065F46",
+    pendingBg: "#FEF3C7", pendingText: "#92400E",
+    overdueBg: "#FEE2E2", overdueText: "#991B1B",
+    btnEdit: "#F3F4F6", btnEditHover: "#E5E7EB",
+    btnDelete: "#FEE2E2", btnDeleteHover: "#FECACA"
+  };
+
+  const layoutStyle = {
     display: "flex",
     minHeight: "100vh",
-    backgroundColor: "#faf9f5",
-    fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
+    backgroundColor: colors.bgCream,
+    fontFamily: "'Inter', -apple-system, sans-serif",
+    color: colors.textMain
   };
 
   const sidebarStyle = {
-    width: "250px",
-    backgroundColor: "#181c24",
-    color: "#f4f5f7",
-    padding: "24px 16px",
+    width: "260px",
+    backgroundColor: colors.cardWhite,
+    borderRight: `1px solid ${colors.border}`,
+    padding: "30px",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    flexShrink: 0,
-    boxShadow: "2px 0 12px rgba(0, 0, 0, 0.08)"
+    gap: "8px"
   };
 
-  const brandStyle = {
-    padding: "0 8px 22px 8px",
-    borderBottom: "1px solid #282f3d"
-  };
-
-  const navListStyle = {
-    listStyle: "none",
-    padding: 0,
-    margin: "24px 0 0 0",
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-
-  const navItemBtnStyle = (isActive) => ({
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "11px 16px",
-    borderRadius: "10px",
-    border: "none",
-    backgroundColor: isActive ? "#f59e0b" : "transparent",
-    color: isActive ? "#181c24" : "#9ca3af",
-    fontSize: "14px",
-    fontWeight: isActive ? "700" : "500",
-    cursor: "pointer",
-    textAlign: "left",
-    transition: "all 0.15s ease",
-    boxShadow: isActive ? "0 2px 8px rgba(245, 158, 11, 0.3)" : "none"
+  const navItemStyle = (isActive) => ({
+    padding: "12px 16px",
+    borderRadius: "12px",
+    backgroundColor: isActive ? colors.primary : "transparent",
+    color: isActive ? "#FFF" : colors.textMuted,
+    fontWeight: isActive ? "600" : "500",
+    cursor: "pointer"
   });
 
   const mainContentStyle = {
     flex: 1,
+    padding: "40px 50px",
     overflowY: "auto",
-    minHeight: "100vh",
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    gap: "30px"
   };
 
-  const integrationNoticeStyle = {
-    backgroundColor: "#fffbeb",
-    borderBottom: "1px solid #fef3c7",
-    padding: "10px 36px",
-    fontSize: "13px",
-    color: "#92400e",
+  const cardBaseStyle = {
+    backgroundColor: colors.cardWhite,
+    borderRadius: "24px",
+    padding: "24px",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+    border: `1px solid ${colors.border}`,
+    transition: "box-shadow 0.3s ease, transform 0.3s ease"
+  };
+
+  const statCardStyle = {
+    ...cardBaseStyle,
+    flex: 1,
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: "8px"
+    flexDirection: "column",
+    justifyContent: "center"
+  };
+  
+  const getBadgeStyle = (status) => {
+    let bg, color;
+    if (status === "Paid") { bg = colors.paidBg; color = colors.paidText; }
+    else if (status === "Pending") { bg = colors.pendingBg; color = colors.pendingText; }
+    else { bg = colors.overdueBg; color = colors.overdueText; }
+    
+    return {
+      backgroundColor: bg,
+      color: color,
+      padding: "6px 14px",
+      borderRadius: "20px",
+      fontSize: "12px",
+      fontWeight: "700",
+      display: "inline-block"
+    };
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: "12px",
+    border: `1px solid ${colors.border}`,
+    fontSize: "14px",
+    boxSizing: "border-box",
+    backgroundColor: colors.bgCream,
+    outline: "none",
+    marginBottom: "16px"
+  };
+
+  const labelStyle = {
+    display: "block",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: colors.textMuted,
+    marginBottom: "6px"
   };
 
   return (
-    <div style={appContainerStyle}>
-      {/* ----------------- SIDEBAR NAVIGATION ----------------- */}
-      <aside style={sidebarStyle}>
-        <div>
-          {/* Brand Header */}
-          <div style={brandStyle}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "10px",
-                  backgroundColor: "#f59e0b",
-                  color: "#181c24",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  fontSize: "18px",
-                  boxShadow: "0 2px 6px rgba(245, 158, 11, 0.4)"
-                }}
-              >
-                ⚡
-              </div>
-              <div>
-                <h2 style={{ fontSize: "16px", fontWeight: "700", margin: 0, color: "#ffffff" }}>
-                  LifeAdmin
-                </h2>
-                <span style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600" }}>
-                  Module 3 (Person 3)
-                </span>
-              </div>
+    <div style={layoutStyle}>
+      {/* ---------------- SIDEBAR ---------------- */}
+      <div style={sidebarStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "800", marginBottom: "40px", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{width: "32px", height: "32px", backgroundColor: colors.primary, borderRadius: "8px"}}></div>
+          LifeAdmin
+        </div>
+        <div style={navItemStyle(false)}>Dashboard</div>
+        <div style={navItemStyle(true)}>Bills</div>
+        <div style={navItemStyle(false)}>Subscriptions</div>
+        <div style={navItemStyle(false)}>Appointments</div>
+        <div style={navItemStyle(false)}>Documents</div>
+        <div style={{marginTop: "auto", ...navItemStyle(false)}}>Settings</div>
+      </div>
+
+      {/* ---------------- MAIN CONTENT ---------------- */}
+      <div style={mainContentStyle}>
+        
+        {/* Top Welcome Section */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <h1 style={{ fontSize: "32px", fontWeight: "700", margin: "0 0 8px 0" }}>Bills Dashboard</h1>
+            <p style={{ color: colors.textMuted, margin: 0 }}>Manage your finances and track due dates.</p>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <p style={{ color: colors.textMuted, margin: "0 0 4px 0", fontSize: "14px", fontWeight: "600" }}>Current Month Spending</p>
+            <div style={{ fontSize: "28px", fontWeight: "800" }}>₹{currentMonthSpending.toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Statistics Cards */}
+        <div style={{ display: "flex", gap: "20px" }}>
+          <div style={statCardStyle}>
+            <div style={{ color: colors.textMuted, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Total Bills</div>
+            <div style={{ fontSize: "36px", fontWeight: "800" }}>{totalBills}</div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={{ color: colors.pendingText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Pending</div>
+            <div style={{ fontSize: "36px", fontWeight: "800" }}>{pendingCount}</div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={{ color: colors.paidText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Paid</div>
+            <div style={{ fontSize: "36px", fontWeight: "800" }}>{paidCount}</div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={{ color: colors.overdueText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Overdue</div>
+            <div style={{ fontSize: "36px", fontWeight: "800" }}>{overdueCount}</div>
+          </div>
+        </div>
+
+        {/* Two Column Layout for List and Form */}
+        <div style={{ display: "flex", gap: "30px", alignItems: "flex-start" }}>
+          
+          {/* Bills List Section */}
+          <div style={{ flex: 2, display: "flex", flexDirection: "column", gap: "16px" }}>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0" }}>Your Bills</h2>
+            
+            {bills.length === 0 ? (
+              <p style={{ color: colors.textMuted }}>No bills added yet.</p>
+            ) : (
+              bills.map((bill) => (
+                <div 
+                  key={bill.id} 
+                  onMouseEnter={() => setHoveredCardId(bill.id)}
+                  onMouseLeave={() => setHoveredCardId(null)}
+                  style={{
+                    ...cardBaseStyle,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "20px 24px",
+                    boxShadow: hoveredCardId === bill.id ? "0 12px 30px rgba(0,0,0,0.06)" : cardBaseStyle.boxShadow,
+                    transform: hoveredCardId === bill.id ? "translateY(-2px)" : "none"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "14px", backgroundColor: colors.bgCream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📄</div>
+                    <div>
+                      <div style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>{bill.name}</div>
+                      <div style={{ fontSize: "13px", color: colors.textMuted }}>{bill.category} • Due: {bill.dueDate}</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                    <div style={{ fontSize: "18px", fontWeight: "700" }}>₹{bill.amount.toLocaleString()}</div>
+                    <div style={getBadgeStyle(bill.status)}>{bill.status}</div>
+                    
+                    {/* Action Buttons */}
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button 
+                        onClick={() => handleEditBill(bill)}
+                        onMouseEnter={() => setHoveredBtnId(`edit-${bill.id}`)}
+                        onMouseLeave={() => setHoveredBtnId(null)}
+                        style={{
+                          backgroundColor: hoveredBtnId === `edit-${bill.id}` ? colors.btnEditHover : colors.btnEdit,
+                          color: colors.textMain,
+                          border: "none",
+                          padding: "8px 16px",
+                          borderRadius: "20px",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          transition: "background 0.2s"
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteBill(bill.id)}
+                        onMouseEnter={() => setHoveredBtnId(`del-${bill.id}`)}
+                        onMouseLeave={() => setHoveredBtnId(null)}
+                        style={{
+                          backgroundColor: hoveredBtnId === `del-${bill.id}` ? colors.btnDeleteHover : colors.btnDelete,
+                          color: colors.overdueText,
+                          border: "none",
+                          padding: "8px 16px",
+                          borderRadius: "20px",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          transition: "background 0.2s"
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Add/Edit Bill Form Section */}
+          <div style={{ flex: 1 }}>
+            <div style={{ ...cardBaseStyle, position: "sticky", top: "40px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0 0 20px 0" }}>{editingBillId ? "Edit Bill" : "Add New Bill"}</h2>
+              
+              <form onSubmit={handleSaveBill}>
+                <div>
+                  <label style={labelStyle}>Bill Name</label>
+                  <input 
+                    type="text" 
+                    name="name" 
+                    value={formData.name} 
+                    onChange={handleInputChange}
+                    placeholder="e.g., Electricity"
+                    style={inputStyle} 
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <label style={labelStyle}>Category</label>
+                  <input 
+                    type="text" 
+                    name="category" 
+                    value={formData.category} 
+                    onChange={handleInputChange}
+                    placeholder="e.g., Utilities"
+                    style={inputStyle} 
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Amount (₹)</label>
+                  <input 
+                    type="number" 
+                    name="amount" 
+                    value={formData.amount} 
+                    onChange={handleInputChange}
+                    placeholder="e.g., 2000"
+                    style={inputStyle} 
+                    required 
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Due Date</label>
+                  <input 
+                    type="date" 
+                    name="dueDate" 
+                    value={formData.dueDate} 
+                    onChange={handleInputChange}
+                    style={inputStyle} 
+                    required 
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Status</label>
+                  <select 
+                    name="status" 
+                    value={formData.status} 
+                    onChange={handleInputChange}
+                    style={{ ...inputStyle, cursor: "pointer" }}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                  </select>
+                </div>
+
+                <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                  <button 
+                    type="submit" 
+                    style={{
+                      flex: 1,
+                      backgroundColor: colors.primary,
+                      color: "#FFF",
+                      border: "none",
+                      padding: "14px",
+                      borderRadius: "20px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(17,24,39,0.2)"
+                    }}
+                  >
+                    {editingBillId ? "Update Bill" : "Save Bill"}
+                  </button>
+                  
+                  {editingBillId && (
+                    <button 
+                      type="button" 
+                      onClick={handleCancelEdit}
+                      style={{
+                        backgroundColor: colors.btnEdit,
+                        color: colors.textMain,
+                        border: "none",
+                        padding: "14px 20px",
+                        borderRadius: "20px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
-
-          {/* Module 3 Nav Links */}
-          <ul style={navListStyle}>
-            <li>
-              <button
-                onClick={() => setActiveTab('bills')}
-                style={navItemBtnStyle(activeTab === 'bills')}
-              >
-                <span style={{ fontSize: "17px" }}>📄</span>
-                <span>Bills</span>
-              </button>
-            </li>
-
-            <li>
-              <button
-                onClick={() => setActiveTab('subscriptions')}
-                style={navItemBtnStyle(activeTab === 'subscriptions')}
-              >
-                <span style={{ fontSize: "17px" }}>📦</span>
-                <span>Subscriptions</span>
-              </button>
-            </li>
-
-            <li>
-              <button
-                onClick={() => setActiveTab('appointments')}
-                style={navItemBtnStyle(activeTab === 'appointments')}
-              >
-                <span style={{ fontSize: "17px" }}>🗓️</span>
-                <span>Appointments</span>
-              </button>
-            </li>
-          </ul>
+          
         </div>
-
-        {/* Sidebar Footer / Developer Info */}
-        <div
-          style={{
-            padding: "14px",
-            backgroundColor: "#202530",
-            borderRadius: "10px",
-            fontSize: "12px",
-            color: "#9ca3af",
-            border: "1px solid #2d3444"
-          }}
-        >
-          <div style={{ fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>
-            👤 Person 3 Workspace
-          </div>
-          <div style={{ color: "#6b7280" }}>BTech 2nd Year Project</div>
-          <div style={{ marginTop: "6px", fontSize: "11px", color: "#f59e0b", fontWeight: "600" }}>
-            Evaluation 1 • Bills Module
-          </div>
-        </div>
-      </aside>
-
-      {/* ----------------- MAIN CONTENT AREA ----------------- */}
-      <main style={mainContentStyle}>
-        {/* Top Header Bar */}
-        <div style={integrationNoticeStyle}>
-          <div>
-            ✨ <strong>LifeAdmin Dashboard:</strong> Evaluation 1 Active
-          </div>
-          <div style={{ fontSize: "12px", color: "#92400e", fontWeight: "600" }}>
-            Current Module: <strong style={{ color: "#d97706" }}>{activeTab.toUpperCase()}</strong>
-          </div>
-        </div>
-
-        {/* Dynamic Page Rendering */}
-        <div style={{ flex: 1 }}>
-          {activeTab === 'bills' && <Bills />}
-          {activeTab === 'subscriptions' && <Subscriptions />}
-          {activeTab === 'appointments' && <Appointments />}
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
-
-// Export individual components for easy team import
-export { Bills, Subscriptions, Appointments };
 
 export default App;
