@@ -5,7 +5,10 @@ import TaskCard from '../../components/tasks/TaskCard';
 /**
  * Dashboard page displays general metrics and a preview of current tasks.
  */
-function Dashboard() {
+function Dashboard({ tasks }) {
+  // Show a preview of the first 3 tasks
+  const previewTasks = tasks.slice(0, 3);
+
   return (
     <div className="page-dashboard">
       <header className="page-header">
@@ -29,27 +32,16 @@ function Dashboard() {
         </div>
         
         <div className="task-preview-grid">
-          <TaskCard 
-            title="Finalize college project documentation" 
-            category="College" 
-            priority="High" 
-            dueDate="2026-08-25" 
-            status="Pending" 
-          />
-          <TaskCard 
-            title="Renew vehicle insurance" 
-            category="Vehicles" 
-            priority="High" 
-            dueDate="2026-09-15" 
-            status="Pending" 
-          />
-          <TaskCard 
-            title="Pay electricity bill" 
-            category="Bills" 
-            priority="Medium" 
-            dueDate="2026-08-30" 
-            status="Pending" 
-          />
+          {previewTasks.map(task => (
+            <TaskCard 
+              key={task.id}
+              title={task.title}
+              category={task.category}
+              priority={task.priority}
+              dueDate={task.dueDate}
+              completed={task.completed}
+            />
+          ))}
         </div>
       </section>
     </div>

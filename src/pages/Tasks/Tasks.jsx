@@ -5,7 +5,7 @@ import TaskForm from '../../components/tasks/TaskForm';
 /**
  * Tasks page displays the complete task list and the new task form.
  */
-function Tasks() {
+function Tasks({ tasks }) {
   return (
     <div className="page-tasks">
       <header className="page-header">
@@ -19,7 +19,7 @@ function Tasks() {
           <section className="tasks-section">
             <h2 className="section-title">All Tasks</h2>
             <p className="section-desc">A complete list of your personal tasks</p>
-            <TaskList />
+            <TaskList tasks={tasks} />
           </section>
         </main>
 

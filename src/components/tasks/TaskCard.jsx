@@ -2,20 +2,21 @@ import React from 'react';
 
 /**
  * TaskCard component represents an individual task.
- * Displays title, category, priority, due date, and status.
+ * Displays title, category, priority, due date, and completed status.
  */
-function TaskCard({ title, category, priority, dueDate, status }) {
+function TaskCard({ title, category, priority, dueDate, completed }) {
   // Determine CSS classes based on priority for specific pill highlights
   const priorityClass = priority.toLowerCase() === 'high' ? 'priority-high' : 
                         priority.toLowerCase() === 'medium' ? 'priority-medium' : 'priority-low';
 
-  const statusClass = status.toLowerCase() === 'completed' ? 'status-completed' : 'status-pending';
+  const statusText = completed ? 'Completed' : 'Pending';
+  const statusClass = completed ? 'status-completed' : 'status-pending';
 
   return (
     <article className="task-card">
       <div className="task-card-header">
         <span className={`task-badge ${priorityClass}`}>{priority} Priority</span>
-        <span className={`task-badge ${statusClass}`}>{status}</span>
+        <span className={`task-badge ${statusClass}`}>{statusText}</span>
       </div>
       
       <h4 className="task-title">{title}</h4>

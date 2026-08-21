@@ -5,6 +5,41 @@ import Tasks from './pages/Tasks/Tasks';
 // Toggle this to 'tasks' to view the Tasks page, or keep as 'dashboard' to view the Dashboard page
 const CURRENT_VIEW = 'dashboard';
 
+const INITIAL_TASKS = [
+  {
+    id: 1,
+    title: "Finalize college project documentation",
+    category: "College",
+    priority: "High",
+    dueDate: "2026-08-25",
+    completed: false
+  },
+  {
+    id: 2,
+    title: "Renew vehicle insurance",
+    category: "Vehicles",
+    priority: "High",
+    dueDate: "2026-09-15",
+    completed: false
+  },
+  {
+    id: 3,
+    title: "Pay electricity bill",
+    category: "Bills",
+    priority: "Medium",
+    dueDate: "2026-08-30",
+    completed: false
+  },
+  {
+    id: 4,
+    title: "Book dentist appointment",
+    category: "Appointments",
+    priority: "Low",
+    dueDate: "2026-08-22",
+    completed: false
+  }
+];
+
 function App() {
   return (
     <div className="app-container">
@@ -73,7 +108,7 @@ function App() {
 
       {/* Main Content Area */}
       <main className="main-content">
-        {CURRENT_VIEW === 'dashboard' ? <Dashboard /> : <Tasks />}
+        {CURRENT_VIEW === 'dashboard' ? <Dashboard tasks={INITIAL_TASKS} /> : <Tasks tasks={INITIAL_TASKS} />}
       </main>
     </div>
   );
