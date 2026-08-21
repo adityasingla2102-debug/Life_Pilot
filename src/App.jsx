@@ -47,6 +47,43 @@ function App() {
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [hoveredBtnId, setHoveredBtnId] = useState(null);
 
+  // Active view state
+  const [activeView, setActiveView] = useState("Bills");
+
+  // Subscriptions data state
+  const [subscriptions, setSubscriptions] = useState([
+    {
+      id: 1,
+      name: "Spotify",
+      category: "Music",
+      price: 119,
+      billingCycle: "Monthly",
+      nextRenewal: "2026-09-01",
+      status: "Active",
+      notes: "Premium plan"
+    },
+    {
+      id: 2,
+      name: "Netflix",
+      category: "Entertainment",
+      price: 499,
+      billingCycle: "Monthly",
+      nextRenewal: "2026-08-25",
+      status: "Active",
+      notes: "Standard plan"
+    },
+    {
+      id: 3,
+      name: "Adobe Creative Cloud",
+      category: "Software",
+      price: 4230,
+      billingCycle: "Yearly",
+      nextRenewal: "2027-01-15",
+      status: "Cancelled",
+      notes: "Too expensive"
+    }
+  ]);
+
   // ==========================================
   // 2. DERIVED DATA (STATISTICS)
   // ==========================================
@@ -57,6 +94,14 @@ function App() {
   const currentMonthSpending = bills
     .filter(bill => bill.status === "Paid")
     .reduce((sum, bill) => sum + Number(bill.amount), 0);
+
+  // Subscriptions Statistics
+  const totalSubscriptions = subscriptions.length;
+  const activeSubscriptionsCount = subscriptions.filter(sub => sub.status === "Active").length;
+  const monthlySpending = subscriptions
+    .filter(sub => sub.status === "Active" && sub.billingCycle === "Monthly")
+    .reduce((sum, sub) => sum + Number(sub.price), 0);
+  const upcomingRenewalsCount = subscriptions.filter(sub => sub.status === "Active").length;
 
   // ==========================================
   // 3. CRUD HANDLERS
@@ -248,17 +293,18 @@ function App() {
           <div style={{width: "32px", height: "32px", backgroundColor: colors.primary, borderRadius: "8px"}}></div>
           LifeAdmin
         </div>
-        <div style={navItemStyle(false)}>Dashboard</div>
-        <div style={navItemStyle(true)}>Bills</div>
-        <div style={navItemStyle(false)}>Subscriptions</div>
-        <div style={navItemStyle(false)}>Appointments</div>
-        <div style={navItemStyle(false)}>Documents</div>
-        <div style={{marginTop: "auto", ...navItemStyle(false)}}>Settings</div>
+        <div style={navItemStyle(activeView === "Dashboard")} onClick={() => setActiveView("Dashboard")}>Dashboard</div>
+        <div style={navItemStyle(activeView === "Bills")} onClick={() => setActiveView("Bills")}>Bills</div>
+        <div style={navItemStyle(activeView === "Subscriptions")} onClick={() => setActiveView("Subscriptions")}>Subscriptions</div>
+        <div style={navItemStyle(activeView === "Appointments")} onClick={() => setActiveView("Appointments")}>Appointments</div>
+        <div style={navItemStyle(activeView === "Documents")} onClick={() => setActiveView("Documents")}>Documents</div>
+        <div style={{marginTop: "auto", ...navItemStyle(activeView === "Settings")}} onClick={() => setActiveView("Settings")}>Settings</div>
       </div>
 
       {/* ---------------- MAIN CONTENT ---------------- */}
       <div style={mainContentStyle}>
-        
+        {activeView === "Bills" && (
+          <>
         {/* Top Welcome Section */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
@@ -486,6 +532,110 @@ function App() {
           </div>
           
         </div>
+          </>
+        )}
+
+        {activeView === "Subscriptions" && (
+          <>
+            {/* Top Welcome Section */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+              <div>
+                <h1 style={{ fontSize: "32px", fontWeight: "700", margin: "0 0 8px 0" }}>Subscriptions</h1>
+                <p style={{ color: colors.textMuted, margin: 0 }}>Keep track of your recurring expenses.</p>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <button 
+                  style={{
+                    backgroundColor: colors.primary,
+                    color: "#FFF",
+                    border: "none",
+                    padding: "14px 24px",
+                    borderRadius: "20px",
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(17,24,39,0.2)"
+                  }}
+                >
+                  Add Subscription
+                </button>
+              </div>
+            </div>
+
+            {/* Statistics Cards */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={statCardStyle}>
+                <div style={{ color: colors.textMuted, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Total Subscriptions</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{totalSubscriptions}</div>
+              </div>
+              <div style={statCardStyle}>
+                <div style={{ color: colors.paidText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Active Subscriptions</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{activeSubscriptionsCount}</div>
+              </div>
+              <div style={statCardStyle}>
+                <div style={{ color: colors.pendingText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Monthly Spending</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>₹{monthlySpending.toLocaleString()}</div>
+              </div>
+              <div style={statCardStyle}>
+                <div style={{ color: colors.textMuted, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Upcoming Renewals</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{upcomingRenewalsCount}</div>
+              </div>
+            </div>
+
+            {/* Subscriptions List Section */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0" }}>Your Subscriptions</h2>
+              
+              {subscriptions.length === 0 ? (
+                <p style={{ color: colors.textMuted }}>No subscriptions added yet.</p>
+              ) : (
+                subscriptions.map((sub) => (
+                  <div 
+                    key={sub.id} 
+                    onMouseEnter={() => setHoveredCardId(`sub-${sub.id}`)}
+                    onMouseLeave={() => setHoveredCardId(null)}
+                    style={{
+                      ...cardBaseStyle,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "20px 24px",
+                      boxShadow: hoveredCardId === `sub-${sub.id}` ? "0 12px 30px rgba(0,0,0,0.06)" : cardBaseStyle.boxShadow,
+                      transform: hoveredCardId === `sub-${sub.id}` ? "translateY(-2px)" : "none"
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                      <div style={{ width: "48px", height: "48px", borderRadius: "14px", backgroundColor: colors.bgCream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🔄</div>
+                      <div>
+                        <div style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>{sub.name}</div>
+                        <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.category} • Next Renewal: {sub.nextRenewal}</div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "18px", fontWeight: "700" }}>₹{sub.price.toLocaleString()}</div>
+                        <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.billingCycle}</div>
+                      </div>
+                      
+                      <div style={{
+                        backgroundColor: sub.status === "Active" ? colors.paidBg : colors.overdueBg,
+                        color: sub.status === "Active" ? colors.paidText : colors.overdueText,
+                        padding: "6px 14px",
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        display: "inline-block"
+                      }}>
+                        {sub.status}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
