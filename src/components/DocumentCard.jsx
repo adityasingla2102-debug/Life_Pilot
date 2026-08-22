@@ -1,7 +1,7 @@
 import React from 'react';
 
-// Card component displaying individual document information via props
-export default function DocumentCard({ document }) {
+// Card component displaying individual document with Edit and Delete actions
+export default function DocumentCard({ document, onEdit, onDelete }) {
   const cardStyle = {
     backgroundColor: '#FFFFFF',
     borderRadius: '20px',
@@ -10,7 +10,7 @@ export default function DocumentCard({ document }) {
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justify: 'space-between'
   };
 
   const badgeStyle = {
@@ -24,6 +24,18 @@ export default function DocumentCard({ document }) {
     alignSelf: 'flex-start',
     marginBottom: '16px'
   };
+
+  const actionButtonStyle = (isDelete = false) => ({
+    flex: 1,
+    padding: '8px 14px',
+    borderRadius: '9999px',
+    backgroundColor: isDelete ? '#FDF2F2' : '#EAE8DF',
+    color: isDelete ? '#9B1C1C' : '#222222',
+    fontSize: '0.8rem',
+    fontWeight: '700',
+    border: 'none',
+    cursor: 'pointer'
+  });
 
   return (
     <div style={cardStyle}>
@@ -42,6 +54,16 @@ export default function DocumentCard({ document }) {
             <strong style={{ color: '#222222' }}>{document.expiryDate}</strong>
           </div>
         </div>
+      </div>
+
+      {/* Edit and Delete Buttons */}
+      <div style={{ display: 'flex', gap: '10px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #E5E3DA' }}>
+        <button style={actionButtonStyle(false)} onClick={() => onEdit(document)}>
+          Edit
+        </button>
+        <button style={actionButtonStyle(true)} onClick={() => onDelete(document.id)}>
+          Delete
+        </button>
       </div>
     </div>
   );
