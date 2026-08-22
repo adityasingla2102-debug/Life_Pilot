@@ -84,6 +84,16 @@ function App() {
     }
   ]);
 
+  const [subFormData, setSubFormData] = useState({
+    name: "",
+    category: "",
+    price: "",
+    billingCycle: "Monthly",
+    nextRenewal: "",
+    notes: ""
+  });
+  const [editingSubId, setEditingSubId] = useState(null);
+
   // ==========================================
   // 2. DERIVED DATA (STATISTICS)
   // ==========================================
@@ -99,9 +109,17 @@ function App() {
   const totalSubscriptions = subscriptions.length;
   const activeSubscriptionsCount = subscriptions.filter(sub => sub.status === "Active").length;
   const monthlySpending = subscriptions
-    .filter(sub => sub.status === "Active" && sub.billingCycle === "Monthly")
-    .reduce((sum, sub) => sum + Number(sub.price), 0);
-  const upcomingRenewalsCount = subscriptions.filter(sub => sub.status === "Active").length;
+    .filter(sub => sub.status === "Active")
+    .reduce((sum, sub) => sum + (sub.billingCycle === "Monthly" ? Number(sub.price) : Number(sub.price) / 12), 0);
+    
+  const today = new Date();
+  const upcomingRenewalsCount = subscriptions.filter(sub => {
+    if (sub.status !== "Active" || !sub.nextRenewal) return false;
+    const renewalDate = new Date(sub.nextRenewal);
+    const diffTime = renewalDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= 30;
+  }).length;
 
   // ==========================================
   // 3. CRUD HANDLERS
@@ -174,6 +192,92 @@ function App() {
       amount: "",
       dueDate: "",
       status: "Pending"
+    });
+  };
+
+  // Subscriptions CRUD Handlers
+  const handleSubInputChange = (e) => {
+    const { name, value } = e.target;
+    setSubFormData({ ...subFormData, [name]: value });
+  };
+
+  const handleAddSubscription = (e) => {
+    e.preventDefault();
+    if (!subFormData.name || !subFormData.price || !subFormData.nextRenewal) {
+      alert("Please fill out Name, Price, and Next Renewal.");
+      return;
+    }
+
+    if (editingSubId !== null) {
+      setSubscriptions(
+        subscriptions.map(sub => 
+          sub.id === editingSubId
+            ? { ...subFormData, id: editingSubId, price: Number(subFormData.price), status: sub.status }
+            : sub
+        )
+      );
+      setEditingSubId(null);
+    } else {
+      const newSub = {
+        ...subFormData,
+        id: Date.now(),
+        price: Number(subFormData.price),
+        status: "Active"
+      };
+      setSubscriptions([...subscriptions, newSub]);
+    }
+
+    setSubFormData({
+      name: "",
+      category: "",
+      price: "",
+      billingCycle: "Monthly",
+      nextRenewal: "",
+      notes: ""
+    });
+  };
+
+  const handleDeleteSubscription = (id) => {
+    setSubscriptions(subscriptions.filter(sub => sub.id !== id));
+  };
+
+  const handleEditSubscription = (sub) => {
+    setEditingSubId(sub.id);
+    setSubFormData({
+      name: sub.name,
+      category: sub.category || "",
+      price: sub.price,
+      billingCycle: sub.billingCycle,
+      nextRenewal: sub.nextRenewal,
+      notes: sub.notes || ""
+    });
+  };
+
+  const handleCancelSubscription = (id) => {
+    setSubscriptions(
+      subscriptions.map(sub => 
+        sub.id === id ? { ...sub, status: "Cancelled" } : sub
+      )
+    );
+  };
+
+  const handleReactivateSubscription = (id) => {
+    setSubscriptions(
+      subscriptions.map(sub => 
+        sub.id === id ? { ...sub, status: "Active" } : sub
+      )
+    );
+  };
+
+  const handleCancelSubEdit = () => {
+    setEditingSubId(null);
+    setSubFormData({
+      name: "",
+      category: "",
+      price: "",
+      billingCycle: "Monthly",
+      nextRenewal: "",
+      notes: ""
     });
   };
 
@@ -582,57 +686,254 @@ function App() {
               </div>
             </div>
 
-            {/* Subscriptions List Section */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0" }}>Your Subscriptions</h2>
+            {/* Two Column Layout for List and Form */}
+            <div style={{ display: "flex", gap: "30px", alignItems: "flex-start", marginTop: "30px" }}>
               
-              {subscriptions.length === 0 ? (
-                <p style={{ color: colors.textMuted }}>No subscriptions added yet.</p>
-              ) : (
-                subscriptions.map((sub) => (
-                  <div 
-                    key={sub.id} 
-                    onMouseEnter={() => setHoveredCardId(`sub-${sub.id}`)}
-                    onMouseLeave={() => setHoveredCardId(null)}
-                    style={{
-                      ...cardBaseStyle,
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "20px 24px",
-                      boxShadow: hoveredCardId === `sub-${sub.id}` ? "0 12px 30px rgba(0,0,0,0.06)" : cardBaseStyle.boxShadow,
-                      transform: hoveredCardId === `sub-${sub.id}` ? "translateY(-2px)" : "none"
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                      <div style={{ width: "48px", height: "48px", borderRadius: "14px", backgroundColor: colors.bgCream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🔄</div>
-                      <div>
-                        <div style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>{sub.name}</div>
-                        <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.category} • Next Renewal: {sub.nextRenewal}</div>
+              {/* Subscriptions List Section */}
+              <div style={{ flex: 2, display: "flex", flexDirection: "column", gap: "16px" }}>
+                <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0" }}>Your Subscriptions</h2>
+                
+                {subscriptions.length === 0 ? (
+                  <p style={{ color: colors.textMuted }}>No subscriptions added yet.</p>
+                ) : (
+                  subscriptions.map((sub) => (
+                    <div 
+                      key={sub.id} 
+                      onMouseEnter={() => setHoveredCardId(`sub-${sub.id}`)}
+                      onMouseLeave={() => setHoveredCardId(null)}
+                      style={{
+                        ...cardBaseStyle,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "16px",
+                        padding: "20px 24px",
+                        boxShadow: hoveredCardId === `sub-${sub.id}` ? "0 12px 30px rgba(0,0,0,0.06)" : cardBaseStyle.boxShadow,
+                        transform: hoveredCardId === `sub-${sub.id}` ? "translateY(-2px)" : "none"
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                          <div style={{ width: "48px", height: "48px", borderRadius: "14px", backgroundColor: colors.bgCream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🔄</div>
+                          <div>
+                            <div style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>{sub.name}</div>
+                            <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.category} • Next Renewal: {sub.nextRenewal}</div>
+                            {sub.notes && <div style={{ fontSize: "12px", color: colors.textMuted, marginTop: "4px" }}>Note: {sub.notes}</div>}
+                          </div>
+                        </div>
+                        
+                        <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "18px", fontWeight: "700" }}>₹{sub.price.toLocaleString()}</div>
+                            <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.billingCycle}</div>
+                          </div>
+                          
+                          <div style={{
+                            backgroundColor: sub.status === "Active" ? colors.paidBg : colors.overdueBg,
+                            color: sub.status === "Active" ? colors.paidText : colors.overdueText,
+                            padding: "6px 14px",
+                            borderRadius: "20px",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            display: "inline-block"
+                          }}>
+                            {sub.status}
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: `1px solid ${colors.border}`, paddingTop: "12px" }}>
+                        {sub.status === "Active" ? (
+                          <button 
+                            onClick={() => handleCancelSubscription(sub.id)}
+                            style={{
+                              backgroundColor: colors.btnEdit,
+                              color: colors.textMain,
+                              border: "none",
+                              padding: "8px 16px",
+                              borderRadius: "20px",
+                              fontSize: "13px",
+                              fontWeight: "600",
+                              cursor: "pointer"
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={() => handleReactivateSubscription(sub.id)}
+                            style={{
+                              backgroundColor: colors.paidBg,
+                              color: colors.paidText,
+                              border: "none",
+                              padding: "8px 16px",
+                              borderRadius: "20px",
+                              fontSize: "13px",
+                              fontWeight: "600",
+                              cursor: "pointer"
+                            }}
+                          >
+                            Reactivate
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => handleEditSubscription(sub)}
+                          style={{
+                            backgroundColor: colors.btnEdit,
+                            color: colors.textMain,
+                            border: "none",
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            fontSize: "13px",
+                            fontWeight: "600",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteSubscription(sub.id)}
+                          style={{
+                            backgroundColor: colors.btnDelete,
+                            color: colors.overdueText,
+                            border: "none",
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            fontSize: "13px",
+                            fontWeight: "600",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Add/Edit Subscription Form Section */}
+              <div style={{ flex: 1 }}>
+                <div style={{ ...cardBaseStyle, position: "sticky", top: "40px" }}>
+                  <h2 style={{ fontSize: "20px", fontWeight: "700", margin: "0 0 20px 0" }}>{editingSubId ? "Edit Subscription" : "Add Subscription"}</h2>
+                  
+                  <form onSubmit={handleAddSubscription}>
+                    <div>
+                      <label style={labelStyle}>Name</label>
+                      <input 
+                        type="text" 
+                        name="name" 
+                        value={subFormData.name} 
+                        onChange={handleSubInputChange}
+                        placeholder="e.g., Netflix"
+                        style={inputStyle} 
+                        required 
+                      />
                     </div>
                     
-                    <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: "18px", fontWeight: "700" }}>₹{sub.price.toLocaleString()}</div>
-                        <div style={{ fontSize: "13px", color: colors.textMuted }}>{sub.billingCycle}</div>
-                      </div>
-                      
-                      <div style={{
-                        backgroundColor: sub.status === "Active" ? colors.paidBg : colors.overdueBg,
-                        color: sub.status === "Active" ? colors.paidText : colors.overdueText,
-                        padding: "6px 14px",
-                        borderRadius: "20px",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        display: "inline-block"
-                      }}>
-                        {sub.status}
-                      </div>
+                    <div>
+                      <label style={labelStyle}>Category</label>
+                      <input 
+                        type="text" 
+                        name="category" 
+                        value={subFormData.category} 
+                        onChange={handleSubInputChange}
+                        placeholder="e.g., Entertainment"
+                        style={inputStyle} 
+                      />
                     </div>
-                  </div>
-                ))
-              )}
+
+                    <div>
+                      <label style={labelStyle}>Price (₹)</label>
+                      <input 
+                        type="number" 
+                        name="price" 
+                        value={subFormData.price} 
+                        onChange={handleSubInputChange}
+                        placeholder="e.g., 499"
+                        style={inputStyle} 
+                        required 
+                      />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Billing Cycle</label>
+                      <select 
+                        name="billingCycle" 
+                        value={subFormData.billingCycle} 
+                        onChange={handleSubInputChange}
+                        style={{ ...inputStyle, cursor: "pointer", height: "42px" }}
+                      >
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Next Renewal Date</label>
+                      <input 
+                        type="date" 
+                        name="nextRenewal" 
+                        value={subFormData.nextRenewal} 
+                        onChange={handleSubInputChange}
+                        style={inputStyle} 
+                        required 
+                      />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Notes</label>
+                      <input 
+                        type="text" 
+                        name="notes" 
+                        value={subFormData.notes} 
+                        onChange={handleSubInputChange}
+                        placeholder="e.g., Standard Plan"
+                        style={inputStyle} 
+                      />
+                    </div>
+
+                    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                      <button 
+                        type="submit" 
+                        style={{
+                          flex: 1,
+                          backgroundColor: colors.primary,
+                          color: "#FFF",
+                          border: "none",
+                          padding: "14px",
+                          borderRadius: "20px",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                          boxShadow: "0 4px 12px rgba(17,24,39,0.2)"
+                        }}
+                      >
+                        {editingSubId ? "Update" : "Add"}
+                      </button>
+                      
+                      {editingSubId && (
+                        <button 
+                          type="button" 
+                          onClick={handleCancelSubEdit}
+                          style={{
+                            backgroundColor: colors.btnEdit,
+                            color: colors.textMain,
+                            border: "none",
+                            padding: "14px 20px",
+                            borderRadius: "20px",
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </>
         )}
