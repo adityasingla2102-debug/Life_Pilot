@@ -407,6 +407,53 @@ function App() {
 
       {/* ---------------- MAIN CONTENT ---------------- */}
       <div style={mainContentStyle}>
+        {activeView === "Dashboard" && (
+          <>
+            <div style={{ marginBottom: "30px" }}>
+              <h1 style={{ fontSize: "32px", fontWeight: "700", margin: "0 0 8px 0" }}>LifeAdmin Dashboard</h1>
+              <p style={{ color: colors.textMuted, margin: 0 }}>Overview of your bills and subscriptions.</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
+              <div style={statCardStyle}>
+                <div style={{ color: colors.textMuted, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Total Bills</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{bills.length}</div>
+              </div>
+              
+              <div style={statCardStyle}>
+                <div style={{ color: colors.pendingText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Pending Bills</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{bills.filter(bill => bill.status === "Pending").length}</div>
+              </div>
+              
+              <div style={statCardStyle}>
+                <div style={{ color: colors.paidText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Paid Bills</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{bills.filter(bill => bill.status === "Paid").length}</div>
+              </div>
+
+              <div style={statCardStyle}>
+                <div style={{ color: colors.textMuted, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Total Subscriptions</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{subscriptions.length}</div>
+              </div>
+
+              <div style={statCardStyle}>
+                <div style={{ color: colors.paidText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Active Subscriptions</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>{subscriptions.filter(sub => sub.status === "Active").length}</div>
+              </div>
+
+              <div style={statCardStyle}>
+                <div style={{ color: colors.overdueText, fontSize: "14px", fontWeight: "600", marginBottom: "8px" }}>Monthly Subscription Spending</div>
+                <div style={{ fontSize: "36px", fontWeight: "800" }}>
+                  ₹{Math.round(
+                    subscriptions
+                      .filter(sub => sub.status === "Active")
+                      .reduce((sum, sub) => sum + (sub.billingCycle === "Monthly" ? Number(sub.price) : Number(sub.price) / 12), 0)
+                  ).toLocaleString()}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
         {activeView === "Bills" && (
           <>
         {/* Top Welcome Section */}
