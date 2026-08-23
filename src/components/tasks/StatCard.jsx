@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * StatCard component displays a statistic metric with a number and a label.

@@ -1,13 +1,19 @@
-import React from 'react';
+
 import StatCard from '../../components/tasks/StatCard';
 import TaskCard from '../../components/tasks/TaskCard';
 
 /**
  * Dashboard page displays general metrics and a preview of current tasks.
  */
-function Dashboard({ tasks }) {
+function Dashboard({ tasks, onToggleComplete }) {
   // Show a preview of the first 3 tasks
   const previewTasks = tasks.slice(0, 3);
+
+  // Dynamic statistics derived directly from the single source of truth (tasks state)
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const pendingTasks = tasks.filter(task => !task.completed).length;
+  const highPriorityTasks = tasks.filter(task => task.priority.toLowerCase() === 'high').length;
 
   return (
     <div className="page-dashboard">
@@ -18,10 +24,10 @@ function Dashboard({ tasks }) {
 
       {/* Metrics Row */}
       <section className="stats-row">
-        <StatCard number="12" label="Total Tasks" />
-        <StatCard number="8" label="Completed" />
-        <StatCard number="4" label="Pending" />
-        <StatCard number="2" label="High Priority" />
+        <StatCard number={totalTasks} label="Total Tasks" />
+        <StatCard number={completedTasks} label="Completed" />
+        <StatCard number={pendingTasks} label="Pending" />
+        <StatCard number={highPriorityTasks} label="High Priority" />
       </section>
 
       {/* Preview Section */}
@@ -35,11 +41,13 @@ function Dashboard({ tasks }) {
           {previewTasks.map(task => (
             <TaskCard 
               key={task.id}
+              id={task.id}
               title={task.title}
               category={task.category}
               priority={task.priority}
               dueDate={task.dueDate}
               completed={task.completed}
+              onToggleComplete={onToggleComplete}
             />
           ))}
         </div>

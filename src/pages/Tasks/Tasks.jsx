@@ -1,11 +1,11 @@
-import React from 'react';
+
 import TaskList from '../../components/tasks/TaskList';
 import TaskForm from '../../components/tasks/TaskForm';
 
 /**
  * Tasks page displays the complete task list and the new task form.
  */
-function Tasks({ tasks }) {
+function Tasks({ tasks, onToggleComplete }) {
   return (
     <div className="page-tasks">
       <header className="page-header">
@@ -19,7 +19,7 @@ function Tasks({ tasks }) {
           <section className="tasks-section">
             <h2 className="section-title">All Tasks</h2>
             <p className="section-desc">A complete list of your personal tasks</p>
-            <TaskList tasks={tasks} />
+            <TaskList tasks={tasks} onToggleComplete={onToggleComplete} />
           </section>
         </main>
 

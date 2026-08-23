@@ -1,10 +1,10 @@
-import React from 'react';
+
 
 /**
  * TaskCard component represents an individual task.
  * Displays title, category, priority, due date, and completed status.
  */
-function TaskCard({ title, category, priority, dueDate, completed }) {
+function TaskCard({ id, title, category, priority, dueDate, completed, onToggleComplete }) {
   // Determine CSS classes based on priority for specific pill highlights
   const priorityClass = priority.toLowerCase() === 'high' ? 'priority-high' : 
                         priority.toLowerCase() === 'medium' ? 'priority-medium' : 'priority-low';
@@ -13,7 +13,7 @@ function TaskCard({ title, category, priority, dueDate, completed }) {
   const statusClass = completed ? 'status-completed' : 'status-pending';
 
   return (
-    <article className="task-card">
+    <article className={`task-card ${completed ? 'completed' : ''}`}>
       <div className="task-card-header">
         <span className={`task-badge ${priorityClass}`}>{priority} Priority</span>
         <span className={`task-badge ${statusClass}`}>{statusText}</span>
@@ -31,6 +31,18 @@ function TaskCard({ title, category, priority, dueDate, completed }) {
           <span className="detail-value">{dueDate}</span>
         </div>
       </div>
+
+      {onToggleComplete && (
+        <div className="task-card-actions">
+          <button 
+            type="button" 
+            className={`btn-task-toggle ${completed ? 'completed' : 'pending'}`}
+            onClick={() => onToggleComplete(id)}
+          >
+            {completed ? 'Mark Incomplete' : 'Mark Complete'}
+          </button>
+        </div>
+      )}
     </article>
   );
 }

@@ -143,6 +143,7 @@ body {
   gap: 12px;
   transition: all 0.2s ease;
   position: relative;
+  cursor: pointer;
 }
 
 .nav-item-icon {
@@ -529,6 +530,45 @@ body {
   color: var(--color-text-muted);
   text-align: center;
   margin: 0;
+}
+
+/* Interactive Task Card and Completion Actions */
+.task-card.completed {
+  opacity: 0.75;
+}
+
+.task-card.completed .task-title {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+.task-card-actions {
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-task-toggle {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-task-toggle:hover {
+  background-color: var(--color-btn-bg);
+}
+
+.btn-task-toggle.completed {
+  background-color: var(--color-soft-gray);
+  color: var(--color-text-secondary);
 }
 
 /* Responsive Styling */

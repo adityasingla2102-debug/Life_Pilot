@@ -1,9 +1,6 @@
-import React from 'react';
+import { useState } from 'react';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Tasks from './pages/Tasks/Tasks';
-
-// Toggle this to 'tasks' to view the Tasks page, or keep as 'dashboard' to view the Dashboard page
-const CURRENT_VIEW = 'dashboard';
 
 const INITIAL_TASKS = [
   {
@@ -41,6 +38,15 @@ const INITIAL_TASKS = [
 ];
 
 function App() {
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+
+  const handleToggleComplete = (id) => {
+    setTasks(prevTasks => prevTasks.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
   return (
     <div className="app-container">
       {/* Sidebar Navigation */}
@@ -65,7 +71,10 @@ function App() {
             <span className="nav-group-title">MODULES</span>
             <ul className="nav-list">
               <li>
-                <div className={`nav-item ${CURRENT_VIEW === 'dashboard' ? 'active' : ''}`}>
+                <div 
+                  className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`}
+                  onClick={() => setCurrentView('dashboard')}
+                >
                   <span className="nav-item-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="7" height="9" rx="1"/>
@@ -75,11 +84,14 @@ function App() {
                     </svg>
                   </span>
                   <span className="nav-item-text">Dashboard</span>
-                  {CURRENT_VIEW === 'dashboard' && <span className="nav-active-dot"></span>}
+                  {currentView === 'dashboard' && <span className="nav-active-dot"></span>}
                 </div>
               </li>
               <li>
-                <div className={`nav-item ${CURRENT_VIEW === 'tasks' ? 'active' : ''}`}>
+                <div 
+                  className={`nav-item ${currentView === 'tasks' ? 'active' : ''}`}
+                  onClick={() => setCurrentView('tasks')}
+                >
                   <span className="nav-item-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
@@ -87,7 +99,7 @@ function App() {
                     </svg>
                   </span>
                   <span className="nav-item-text">Tasks</span>
-                  {CURRENT_VIEW === 'tasks' && <span className="nav-active-dot"></span>}
+                  {currentView === 'tasks' && <span className="nav-active-dot"></span>}
                 </div>
               </li>
             </ul>
@@ -108,7 +120,11 @@ function App() {
 
       {/* Main Content Area */}
       <main className="main-content">
-        {CURRENT_VIEW === 'dashboard' ? <Dashboard tasks={INITIAL_TASKS} /> : <Tasks tasks={INITIAL_TASKS} />}
+        {currentView === 'dashboard' ? (
+          <Dashboard tasks={tasks} onToggleComplete={handleToggleComplete} />
+        ) : (
+          <Tasks tasks={tasks} onToggleComplete={handleToggleComplete} />
+        )}
       </main>
     </div>
   );
