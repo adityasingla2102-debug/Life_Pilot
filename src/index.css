@@ -468,7 +468,7 @@ body {
   margin: 0 0 24px 0;
 }
 
-.task-form-disabled {
+.task-form {
   display: flex;
   flex-direction: column;
   gap: 20px;

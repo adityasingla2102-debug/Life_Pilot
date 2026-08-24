@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Tasks from './pages/Tasks/Tasks';
 
@@ -41,10 +41,19 @@ function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [tasks, setTasks] = useState(INITIAL_TASKS);
 
+  // Set document title once when the app mounts
+  useEffect(() => {
+    document.title = "LifeAdmin";
+  }, []);
+
   const handleToggleComplete = (id) => {
     setTasks(prevTasks => prevTasks.map(task => 
       task.id === id ? { ...task, completed: !task.completed } : task
     ));
+  };
+
+  const handleAddTask = (newTask) => {
+    setTasks(prevTasks => [...prevTasks, newTask]);
   };
 
   return (
@@ -123,7 +132,11 @@ function App() {
         {currentView === 'dashboard' ? (
           <Dashboard tasks={tasks} onToggleComplete={handleToggleComplete} />
         ) : (
-          <Tasks tasks={tasks} onToggleComplete={handleToggleComplete} />
+          <Tasks 
+            tasks={tasks} 
+            onToggleComplete={handleToggleComplete} 
+            onAddTask={handleAddTask} 
+          />
         )}
       </main>
     </div>

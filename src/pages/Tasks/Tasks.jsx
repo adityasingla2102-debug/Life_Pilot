@@ -5,7 +5,7 @@ import TaskForm from '../../components/tasks/TaskForm';
 /**
  * Tasks page displays the complete task list and the new task form.
  */
-function Tasks({ tasks, onToggleComplete }) {
+function Tasks({ tasks, onToggleComplete, onAddTask }) {
   return (
     <div className="page-tasks">
       <header className="page-header">
@@ -25,7 +25,7 @@ function Tasks({ tasks, onToggleComplete }) {
 
         {/* Sidebar Form Column */}
         <aside className="tasks-sidebar-content">
-          <TaskForm />
+          <TaskForm onAddTask={onAddTask} />
         </aside>
       </div>
     </div>
