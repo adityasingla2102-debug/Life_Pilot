@@ -20,7 +20,7 @@ export default function Documents({ documents, setDocuments }) {
   });
 
   const totalDocs = documents.length;
-  const validDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Active').length;
+  const validDocs = documents.filter(d => getExpiryStatus(d.expiryDate, 'Valid') === 'Valid').length;
   const expiringDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Expiring Soon').length;
   const expiredDocs = documents.filter(d => getExpiryStatus(d.expiryDate) === 'Expired').length;
 

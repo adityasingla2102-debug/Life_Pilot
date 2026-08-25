@@ -1,25 +1,27 @@
 import React from 'react';
 
 export default function StatusBadge({ status }) {
+  const badgeText = String(status || '').trim();
   let badgeStyle = {
     display: 'inline-flex',
     alignItems: 'center',
-    padding: '5px 14px',
+    padding: '4px 12px',
     borderRadius: '9999px',
     fontSize: '0.72rem',
     fontWeight: '700',
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase'
+    letterSpacing: '0.02em'
   };
 
-  if (status === 'VALID' || status === 'Active') {
+  const upper = badgeText.toUpperCase();
+
+  if (upper === 'VALID' || upper === 'ACTIVE') {
     badgeStyle = {
       ...badgeStyle,
       backgroundColor: '#EAE8DF',
       color: '#222222',
       border: '1px solid #D9D8D2'
     };
-  } else if (status === 'EXPIRING SOON' || status === 'Service Due') {
+  } else if (upper === 'EXPIRING SOON' || upper === 'SERVICE DUE') {
     badgeStyle = {
       ...badgeStyle,
       backgroundColor: '#FFF3BE',
@@ -27,7 +29,6 @@ export default function StatusBadge({ status }) {
       border: '1px solid #FFEBAA'
     };
   } else {
-    // EXPIRED
     badgeStyle = {
       ...badgeStyle,
       backgroundColor: '#FDF2F2',
@@ -38,8 +39,9 @@ export default function StatusBadge({ status }) {
 
   return (
     <span style={badgeStyle}>
-      {status}
+      {badgeText}
     </span>
   );
 }
+
 

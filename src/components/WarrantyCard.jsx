@@ -1,7 +1,12 @@
 import React from 'react';
+import StatusBadge from './StatusBadge.jsx';
+import { getExpiryStatus, getRemainingDaysText } from '../data/initialData.jsx';
 
-// Card component displaying individual warranty details with Edit and Delete actions
+// Card component displaying individual warranty details with status badge, remaining days, and Edit/Delete actions
 export default function WarrantyCard({ warranty, onEdit, onDelete }) {
+  const status = getExpiryStatus(warranty.warrantyExpiry, 'Active');
+  const remainingDays = getRemainingDaysText(warranty.warrantyExpiry);
+
   const cardStyle = {
     backgroundColor: '#FFFFFF',
     borderRadius: '20px',
@@ -28,9 +33,12 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
   return (
     <div style={cardStyle}>
       <div>
-        <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#222222', marginBottom: '16px' }}>
-          {warranty.productName}
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#222222', margin: 0 }}>
+            {warranty.productName}
+          </h3>
+          <StatusBadge status={status} />
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#737373' }}>Purchase Date:</span>
@@ -40,6 +48,12 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
             <span style={{ color: '#737373' }}>Warranty Expiry:</span>
             <strong style={{ color: '#222222' }}>{warranty.warrantyExpiry}</strong>
           </div>
+          {remainingDays && (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#737373' }}>Remaining:</span>
+              <strong style={{ color: status === 'Expired' ? '#9B1C1C' : '#222222' }}>{remainingDays}</strong>
+            </div>
+          )}
           {warranty.notes && (
             <div style={{ marginTop: '8px', padding: '10px 12px', backgroundColor: '#FAF9F5', borderRadius: '8px', fontSize: '0.8rem', color: '#555555' }}>
               {warranty.notes}
@@ -59,3 +73,4 @@ export default function WarrantyCard({ warranty, onEdit, onDelete }) {
     </div>
   );
 }
+

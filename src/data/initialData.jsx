@@ -36,40 +36,50 @@ export const INITIAL_WARRANTIES = [
   }
 ];
 
-// Calculate remaining days until expiry date
-export const getRemainingDays = (expiryDateStr) => {
-  if (!expiryDateStr) return 0;
+// Calculate remaining days text: "45 days left", "12 days left", or "Expired"
+export const getRemainingDaysText = (expiryDateStr) => {
+  if (!expiryDateStr) return '';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const expDate = new Date(expiryDateStr);
+  if (isNaN(expDate.getTime())) return '';
   expDate.setHours(0, 0, 0, 0);
 
-  const diffTime = expDate - today;
+  const diffTime = expDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays > 0 ? diffDays : 0;
+
+  if (diffDays < 0) {
+    return 'Expired';
+  } else if (diffDays === 0) {
+    return '0 days left';
+  } else {
+    return `${diffDays} days left`;
+  }
 };
 
-// Calculate status: Active, Expiring Soon, Expired
-export const getExpiryStatus = (expiryDateStr) => {
-  if (!expiryDateStr) return "Active";
+// Calculate status: Valid/Active, Expiring Soon, Expired
+export const getExpiryStatus = (expiryDateStr, defaultValid = "Valid") => {
+  if (!expiryDateStr) return defaultValid;
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const expDate = new Date(expiryDateStr);
+  if (isNaN(expDate.getTime())) return defaultValid;
   expDate.setHours(0, 0, 0, 0);
 
   if (expDate < today) {
     return "Expired";
   }
 
-  const diffTime = expDate - today;
+  const diffTime = expDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays <= 30) {
     return "Expiring Soon";
   }
 
-  return "Active";
+  return defaultValid;
 };
+

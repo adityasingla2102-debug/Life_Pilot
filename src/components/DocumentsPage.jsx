@@ -10,7 +10,7 @@ export default function DocumentsPage() {
       name: 'Driving Licence',
       type: 'Government ID',
       issueDate: '15 Aug 2021',
-      expiryDate: '15 Aug 2031'
+      expiryDate: '15 Sep 2026'
     },
     {
       id: 2,

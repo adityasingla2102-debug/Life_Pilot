@@ -1,7 +1,12 @@
 import React from 'react';
+import StatusBadge from './StatusBadge.jsx';
+import { getExpiryStatus, getRemainingDaysText } from '../data/initialData.jsx';
 
-// Card component displaying individual document with Edit and Delete actions
+// Card component displaying individual document with status badge and remaining days
 export default function DocumentCard({ document, onEdit, onDelete }) {
+  const status = getExpiryStatus(document.expiryDate, 'Valid');
+  const remainingDays = getRemainingDaysText(document.expiryDate);
+
   const cardStyle = {
     backgroundColor: '#FFFFFF',
     borderRadius: '20px',
@@ -10,7 +15,7 @@ export default function DocumentCard({ document, onEdit, onDelete }) {
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)',
     display: 'flex',
     flexDirection: 'column',
-    justify: 'space-between'
+    justifyContent: 'space-between'
   };
 
   const badgeStyle = {
@@ -20,9 +25,7 @@ export default function DocumentCard({ document, onEdit, onDelete }) {
     backgroundColor: '#F4D35E',
     padding: '4px 12px',
     borderRadius: '9999px',
-    display: 'inline-block',
-    alignSelf: 'flex-start',
-    marginBottom: '16px'
+    display: 'inline-block'
   };
 
   const actionButtonStyle = (isDelete = false) => ({
@@ -40,7 +43,10 @@ export default function DocumentCard({ document, onEdit, onDelete }) {
   return (
     <div style={cardStyle}>
       <div>
-        <span style={badgeStyle}>{document.type}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <span style={badgeStyle}>{document.type}</span>
+          <StatusBadge status={status} />
+        </div>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#222222', marginBottom: '16px' }}>
           {document.name}
         </h3>
@@ -53,6 +59,12 @@ export default function DocumentCard({ document, onEdit, onDelete }) {
             <span style={{ color: '#737373' }}>Expiry Date:</span>
             <strong style={{ color: '#222222' }}>{document.expiryDate}</strong>
           </div>
+          {remainingDays && (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#737373' }}>Remaining:</span>
+              <strong style={{ color: status === 'Expired' ? '#9B1C1C' : '#222222' }}>{remainingDays}</strong>
+            </div>
+          )}
         </div>
       </div>
 
@@ -68,3 +80,4 @@ export default function DocumentCard({ document, onEdit, onDelete }) {
     </div>
   );
 }
+

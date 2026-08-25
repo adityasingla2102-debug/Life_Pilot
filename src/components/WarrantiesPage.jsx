@@ -9,7 +9,7 @@ export default function WarrantiesPage() {
       id: 1,
       productName: 'MacBook Air',
       purchaseDate: '15 Aug 2025',
-      warrantyExpiry: '15 Aug 2027',
+      warrantyExpiry: '15 Sep 2026',
       notes: 'AppleCare+ included'
     },
     {

@@ -3,9 +3,9 @@ import StatusBadge from './StatusBadge.jsx';
 import { getExpiryStatus } from '../data/initialData.jsx';
 
 export default function VehicleCard({ vehicle, onEdit, onDelete }) {
-  const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
-  const pucStatus = getExpiryStatus(vehicle.pucExpiry);
-  const serviceStatus = getExpiryStatus(vehicle.serviceDate);
+  const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry, 'Valid');
+  const pucStatus = getExpiryStatus(vehicle.pucExpiry, 'Valid');
+  const serviceStatus = getExpiryStatus(vehicle.serviceDate, 'Valid');
 
   return (
     <div style={{
@@ -15,7 +15,7 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
       padding: '28px',
       display: 'flex',
       flexDirection: 'column',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
     }}>
       <div>
@@ -33,14 +33,6 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
           }}>
             🚗
           </div>
-          <StatusBadge status={insuranceStatus} />
-        </div>
-
-        {/* Title & Registration Badge */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#222222', marginBottom: '6px', letterSpacing: '-0.01em' }}>
-            {vehicle.name}
-          </h3>
           <span style={{
             fontSize: '0.72rem',
             fontWeight: 700,
@@ -49,11 +41,17 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
             padding: '4px 12px',
             borderRadius: '8px',
             fontFamily: 'monospace',
-            letterSpacing: '0.05em',
-            display: 'inline-block'
+            letterSpacing: '0.05em'
           }}>
             {vehicle.vehicleNumber} ({vehicle.type})
           </span>
+        </div>
+
+        {/* Title */}
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#222222', marginBottom: '6px', letterSpacing: '-0.01em' }}>
+            {vehicle.name}
+          </h3>
         </div>
 
         {/* Key Dates List */}
@@ -69,7 +67,7 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
             <span style={{ color: '#737373' }}>Next Service</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <strong style={{ color: '#222222', fontWeight: 700 }}>{vehicle.serviceDate || 'N/A'}</strong>
-              {serviceStatus === 'EXPIRING SOON' && (
+              {serviceStatus === 'Expiring Soon' && (
                 <span style={{ fontSize: '0.65rem', background: '#FFF3BE', color: '#856404', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
                   Due Soon
                 </span>
@@ -77,9 +75,12 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
             <span style={{ color: '#737373' }}>Insurance Expiry</span>
-            <strong style={{ color: '#222222', fontWeight: 700 }}>{vehicle.insuranceExpiry || 'N/A'}</strong>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <strong style={{ color: '#222222', fontWeight: 700 }}>{vehicle.insuranceExpiry || 'N/A'}</strong>
+              <StatusBadge status={insuranceStatus} />
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
@@ -103,7 +104,9 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
             backgroundColor: '#EAE8DF',
             color: '#222222',
             fontSize: '0.82rem',
-            fontWeight: 700
+            fontWeight: 700,
+            border: 'none',
+            cursor: 'pointer'
           }}
         >
           Edit
@@ -118,7 +121,9 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
             backgroundColor: '#FDF2F2',
             color: '#9B1C1C',
             fontSize: '0.82rem',
-            fontWeight: 700
+            fontWeight: 700,
+            border: 'none',
+            cursor: 'pointer'
           }}
         >
           Delete
@@ -127,4 +132,5 @@ export default function VehicleCard({ vehicle, onEdit, onDelete }) {
     </div>
   );
 }
+
 
