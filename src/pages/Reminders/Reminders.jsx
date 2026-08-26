@@ -15,6 +15,18 @@ function Reminders() {
     setReminders((prevReminders) => [newReminder, ...prevReminders]);
   };
 
+  const handleToggleReminder = (reminderId) => {
+    setReminders((prevReminders) => prevReminders.map((reminder) => (
+      reminder.id === reminderId
+        ? { ...reminder, completed: !reminder.completed }
+        : reminder
+    )));
+  };
+
+  const handleDeleteReminder = (reminderId) => {
+    setReminders((prevReminders) => prevReminders.filter((reminder) => reminder.id !== reminderId));
+  };
+
   // Derived values without duplicate state
   const totalReminders = reminders.length;
   const pendingReminders = reminders.filter((r) => !r.completed).length;
@@ -58,7 +70,11 @@ function Reminders() {
               <h2 className="section-title">All Reminders</h2>
               <p className="section-subtitle">A timely view of all your pending and completed reminders</p>
             </div>
-            <ReminderList reminders={reminders} />
+            <ReminderList
+              reminders={reminders}
+              onToggleReminder={handleToggleReminder}
+              onDeleteReminder={handleDeleteReminder}
+            />
           </section>
         </main>
 

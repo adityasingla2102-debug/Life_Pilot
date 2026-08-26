@@ -5,7 +5,7 @@ import ReminderCard from './ReminderCard';
  * Props:
  *  - reminders: Array of reminder objects
  */
-function ReminderList({ reminders }) {
+function ReminderList({ reminders, onToggleReminder, onDeleteReminder }) {
   if (!reminders || reminders.length === 0) {
     return (
       <div className="reminders-empty-state">
@@ -18,7 +18,12 @@ function ReminderList({ reminders }) {
   return (
     <div className="reminder-list-grid">
       {reminders.map((reminder) => (
-        <ReminderCard key={reminder.id} reminder={reminder} />
+        <ReminderCard
+          key={reminder.id}
+          reminder={reminder}
+          onToggle={onToggleReminder}
+          onDelete={onDeleteReminder}
+        />
       ))}
     </div>
   );

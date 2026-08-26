@@ -3,7 +3,7 @@
  * Props:
  *  - reminder: { id, title, date, category, priority, completed }
  */
-function ReminderCard({ reminder }) {
+function ReminderCard({ reminder, onToggle, onDelete }) {
   const { title, date, category, priority, completed } = reminder;
 
   // Determine styling based on priority
@@ -42,6 +42,22 @@ function ReminderCard({ reminder }) {
         <div className="reminder-date-info">
           <span className="reminder-date-label">Due Date</span>
           <span className="reminder-date-value">{date}</span>
+        </div>
+        <div className="reminder-card-actions">
+          <button
+            type="button"
+            className="reminder-action-button reminder-toggle-button"
+            onClick={() => onToggle(reminder.id)}
+          >
+            {completed ? 'Mark Pending' : 'Mark Complete'}
+          </button>
+          <button
+            type="button"
+            className="reminder-action-button reminder-delete-button"
+            onClick={() => onDelete(reminder.id)}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </article>
