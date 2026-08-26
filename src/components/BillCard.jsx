@@ -1,11 +1,6 @@
 import React from 'react';
 
-// ==========================================================
-// BILLCARD COMPONENT (PURE REACT JSX + INLINE STYLES)
-// ==========================================================
-// A reusable card component to display an individual bill record.
-// Displays name, category, amount, due date, status badge,
-// recurring indicator, optional notes, and interactive action buttons.
+
 // ==========================================================
 
 function BillCard({ bill, onToggleStatus, onDelete }) {

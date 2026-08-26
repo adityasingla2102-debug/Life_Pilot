@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Login from './components/Login';
 
 function App() {
-  // ==========================================
-  // 1. STATE MANAGEMENT
-  // ==========================================
-  
-  // Bills data state
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      setIsLoggedIn(true);
+      setUsername(localStorage.getItem("username") || "admin");
+    }
+  }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === "admin" && password === "admin123") {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("username", username);
+      setIsLoggedIn(true);
+      setError("");
+    } else {
+      setError("Invalid username or password");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    setIsLoggedIn(false);
+    setUsername("");
+    setPassword("");
+    setError("");
+  };
+
   const [bills, setBills] = useState([
     {
       id: 1,
@@ -389,20 +418,45 @@ function App() {
     marginBottom: "6px"
   };
 
+  if (!isLoggedIn) {
+    return <Login onLoginSuccess={(u) => { setIsLoggedIn(true); setUsername(u); }} />;
+  }
+
   return (
     <div style={layoutStyle}>
       {/* ---------------- SIDEBAR ---------------- */}
       <div style={sidebarStyle}>
         <div style={{ fontSize: "24px", fontWeight: "800", marginBottom: "40px", display: "flex", alignItems: "center", gap: "10px" }}>
           <div style={{width: "32px", height: "32px", backgroundColor: colors.primary, borderRadius: "8px"}}></div>
-          LifeAdmin
+          LifePilot
         </div>
         <div style={navItemStyle(activeView === "Dashboard")} onClick={() => setActiveView("Dashboard")}>Dashboard</div>
         <div style={navItemStyle(activeView === "Bills")} onClick={() => setActiveView("Bills")}>Bills</div>
         <div style={navItemStyle(activeView === "Subscriptions")} onClick={() => setActiveView("Subscriptions")}>Subscriptions</div>
         <div style={navItemStyle(activeView === "Appointments")} onClick={() => setActiveView("Appointments")}>Appointments</div>
         <div style={navItemStyle(activeView === "Documents")} onClick={() => setActiveView("Documents")}>Documents</div>
-        <div style={{marginTop: "auto", ...navItemStyle(activeView === "Settings")}} onClick={() => setActiveView("Settings")}>Settings</div>
+        <div style={navItemStyle(activeView === "Settings")} onClick={() => setActiveView("Settings")}>Settings</div>
+        
+        <div style={{marginTop: "auto", display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '20px', borderTop: `1px solid ${colors.border}`}}>
+          <div style={{ fontSize: '14px', fontWeight: 'bold', color: colors.textMain }}>Welcome, {username}</div>
+          <button 
+            onClick={handleLogout} 
+            style={{ 
+              padding: '10px', 
+              backgroundColor: colors.btnDelete, 
+              color: colors.overdueText, 
+              border: 'none', 
+              borderRadius: '8px', 
+              cursor: 'pointer', 
+              fontWeight: 'bold',
+              transition: 'background 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = colors.btnDeleteHover}
+            onMouseLeave={(e) => e.target.style.backgroundColor = colors.btnDelete}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* ---------------- MAIN CONTENT ---------------- */}
@@ -410,7 +464,7 @@ function App() {
         {activeView === "Dashboard" && (
           <>
             <div style={{ marginBottom: "30px" }}>
-              <h1 style={{ fontSize: "32px", fontWeight: "700", margin: "0 0 8px 0" }}>LifeAdmin Dashboard</h1>
+              <h1 style={{ fontSize: "32px", fontWeight: "700", margin: "0 0 8px 0" }}>LifePilot Dashboard</h1>
               <p style={{ color: colors.textMuted, margin: 0 }}>Overview of your bills and subscriptions.</p>
             </div>
 
