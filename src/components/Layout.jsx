@@ -3,12 +3,6 @@ import { Outlet, NavLink } from 'react-router-dom';
 function Layout() {
   const navigationItems = [
     { label: 'Dashboard', path: '/' },
-    { label: 'Tasks', path: '/tasks' },
-    { label: 'Documents', path: '/documents' },
-    { label: 'Vehicles', path: '/vehicles' },
-    { label: 'Warranties', path: '/warranties' },
-    { label: 'Bills', path: '/bills' },
-    { label: 'Subscriptions', path: '/subscriptions' },
     { label: 'Appointments', path: '/appointments' },
     { label: 'Reminders', path: '/reminders' },
   ];
