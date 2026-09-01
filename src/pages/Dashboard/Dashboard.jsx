@@ -3,7 +3,7 @@ function Dashboard() {
     <div className="dashboard-page">
       <header className="page-header">
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Welcome to LifeAdmin. Manage your personal life here.</p>
+        <p className="page-subtitle">Welcome to Life Pilot. Manage your personal life here.</p>
       </header>
 
       <section className="dashboard-grid">

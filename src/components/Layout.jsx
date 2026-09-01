@@ -3,7 +3,6 @@ import { Outlet, NavLink } from 'react-router-dom';
 function Layout() {
   const navigationItems = [
     { label: 'Dashboard', path: '/' },
-    { label: 'Appointments', path: '/appointments' },
     { label: 'Reminders', path: '/reminders' },
   ];
 
@@ -19,7 +18,7 @@ function Layout() {
             </svg>
           </div>
           <div className="brand-info">
-            <span className="brand-name">LifeAdmin</span>
+            <span className="brand-name">Life Pilot</span>
             <span className="brand-tagline">PERSONAL DASHBOARD</span>
           </div>
         </div>
@@ -61,7 +60,7 @@ function Layout() {
           <div className="user-profile">
             <div className="user-avatar">LA</div>
             <div className="user-details">
-              <span className="user-name">LifeAdmin Account</span>
+              <span className="user-name">Life Pilot Account</span>
               <span className="user-role">Personal Plan</span>
             </div>
           </div>
