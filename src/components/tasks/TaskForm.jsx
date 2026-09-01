@@ -1,27 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-/**
- * TaskForm component serves as a form for task creation.
- */
+const DEFAULT_CATEGORIES = ['College', 'Vehicles', 'Bills', 'Appointments'];
+
 function TaskForm({ onAddTask }) {
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem('categories');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return DEFAULT_CATEGORIES;
+      }
+    }
+    return DEFAULT_CATEGORIES;
+  });
+
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [newCategory, setNewCategory] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
+
+  const handleAddCategory = (e) => {
+    e.preventDefault();
+    const trimmed = newCategory.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const alreadyExists = categories.some(
+      cat => cat.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (!alreadyExists) {
+      setCategories([...categories, trimmed]);
+      setCategory(trimmed);
+      setNewCategory('');
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate that the title is not empty
     if (!title.trim()) {
       return;
     }
 
-    // Create a new task object following the required structure
     const newTask = {
       id: Date.now(),
       title: title.trim(),
-      category: category || 'College',
+      category: category || (categories[0] || 'College'),
       priority: priority || 'Medium',
       dueDate: dueDate || new Date().toISOString().split('T')[0],
       completed: false
@@ -29,7 +62,6 @@ function TaskForm({ onAddTask }) {
 
     onAddTask(newTask);
 
-    // Clear the form fields
     setTitle('');
     setCategory('');
     setPriority('');
@@ -51,22 +83,40 @@ function TaskForm({ onAddTask }) {
             required
           />
         </div>
+
+        <div className="form-group">
+          <label htmlFor="task-category-select">Category</label>
+          <select 
+            id="task-category-select" 
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="" disabled>Select category</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="category-add-row">
+          <input 
+            type="text" 
+            placeholder="New custom category..." 
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            className="category-add-input"
+          />
+          <button 
+            type="button" 
+            className="btn-add-category"
+            onClick={handleAddCategory}
+          >
+            + Add Category
+          </button>
+        </div>
+
         <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="task-category-select">Category</label>
-            <select 
-              id="task-category-select" 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="" disabled>Select category</option>
-              <option value="College">College</option>
-              <option value="Vehicles">Vehicles</option>
-              <option value="Bills">Bills</option>
-              <option value="Appointments">Appointments</option>
-            </select>
-          </div>
           <div className="form-group">
             <label htmlFor="task-priority-select">Priority</label>
             <select 
@@ -81,17 +131,19 @@ function TaskForm({ onAddTask }) {
               <option value="Low">Low</option>
             </select>
           </div>
+
+          <div className="form-group">
+            <label htmlFor="task-date-input">Due Date</label>
+            <input 
+              type="date" 
+              id="task-date-input" 
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="task-date-input">Due Date</label>
-          <input 
-            type="date" 
-            id="task-date-input" 
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            required
-          />
-        </div>
+
         <button type="submit" className="btn-primary">
           Add Task
         </button>
@@ -101,3 +153,4 @@ function TaskForm({ onAddTask }) {
 }
 
 export default TaskForm;
+

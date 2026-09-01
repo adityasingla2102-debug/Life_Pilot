@@ -1,46 +1,81 @@
+function TaskCard({ task, onToggleComplete, onDeleteTask }) {
+  let priorityClass = 'priority-low';
+  if (task.priority === 'High') {
+    priorityClass = 'priority-high';
+  } else if (task.priority === 'Medium') {
+    priorityClass = 'priority-medium';
+  }
 
+  let deadlineLabel = 'Upcoming';
+  let deadlineClass = 'deadline-upcoming';
 
-/**
- * TaskCard component represents an individual task.
- * Displays title, category, priority, due date, and completed status.
- */
-function TaskCard({ id, title, category, priority, dueDate, completed, onToggleComplete }) {
-  // Determine CSS classes based on priority for specific pill highlights
-  const priorityClass = priority.toLowerCase() === 'high' ? 'priority-high' : 
-                        priority.toLowerCase() === 'medium' ? 'priority-medium' : 'priority-low';
+  if (task.completed) {
+    deadlineLabel = 'Completed';
+    deadlineClass = 'status-completed';
+  } else if (task.dueDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const statusText = completed ? 'Completed' : 'Pending';
-  const statusClass = completed ? 'status-completed' : 'status-pending';
+    const parts = task.dueDate.split('-');
+    const due = new Date(parts[0], parts[1] - 1, parts[2]);
+
+    const diffTime = due - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      deadlineLabel = 'OVERDUE';
+      deadlineClass = 'deadline-overdue';
+    } else if (diffDays === 0) {
+      deadlineLabel = 'DUE TODAY';
+      deadlineClass = 'deadline-today';
+    } else if (diffDays <= 3) {
+      deadlineLabel = 'DUE SOON';
+      deadlineClass = 'deadline-soon';
+    }
+  }
 
   return (
-    <article className={`task-card ${completed ? 'completed' : ''}`}>
+    <article className={`task-card ${task.completed ? 'completed' : ''}`}>
       <div className="task-card-header">
-        <span className={`task-badge ${priorityClass}`}>{priority} Priority</span>
-        <span className={`task-badge ${statusClass}`}>{statusText}</span>
+        <h4 className="task-title">{task.title}</h4>
+        <div className="task-badges-group">
+          <span className={`task-badge ${priorityClass}`}>{task.priority}</span>
+          <span className={`task-badge ${deadlineClass}`}>{deadlineLabel}</span>
+        </div>
       </div>
-      
-      <h4 className="task-title">{title}</h4>
       
       <div className="task-details">
         <div className="task-detail-item">
           <span className="detail-label">Category</span>
-          <span className="detail-value">{category}</span>
+          <span className="detail-value">{task.category}</span>
         </div>
         <div className="task-detail-item">
           <span className="detail-label">Due Date</span>
-          <span className="detail-value">{dueDate}</span>
+          <span className="detail-value">{task.dueDate}</span>
         </div>
       </div>
 
-      {onToggleComplete && (
+      {(onToggleComplete || onDeleteTask) && (
         <div className="task-card-actions">
-          <button 
-            type="button" 
-            className={`btn-task-toggle ${completed ? 'completed' : 'pending'}`}
-            onClick={() => onToggleComplete(id)}
-          >
-            {completed ? 'Mark Incomplete' : 'Mark Complete'}
-          </button>
+          {onDeleteTask && (
+            <button 
+              type="button" 
+              className="btn-task-delete"
+              onClick={() => onDeleteTask(task.id)}
+            >
+              Delete
+            </button>
+          )}
+
+          {onToggleComplete && (
+            <button 
+              type="button" 
+              className={`btn-task-toggle ${task.completed ? 'completed' : 'pending'}`}
+              onClick={() => onToggleComplete(task.id)}
+            >
+              {task.completed ? 'Mark Incomplete' : 'Mark Complete'}
+            </button>
+          )}
         </div>
       )}
     </article>
@@ -48,3 +83,5 @@ function TaskCard({ id, title, category, priority, dueDate, completed, onToggleC
 }
 
 export default TaskCard;
+
+
