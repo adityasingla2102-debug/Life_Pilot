@@ -1,29 +1,28 @@
-/* Typography & Core Resets */
 :root {
   --color-bg-page: #F5F4EF;
   --color-bg-sidebar: #FFFFFF;
   --color-bg-card: #FFFFFF;
-  
+
   --color-text-primary: #242424;
   --color-text-secondary: #777777;
   --color-text-muted: #999999;
-  
+
   --color-warning: #9A7500;
   --color-warning-bg: #FFF1B8;
-  
+
   --color-error: #A52B29;
   --color-error-bg: #FFF1F0;
-  
+
   --color-success: #333333;
   --color-success-bg: #ECEAE3;
-  
+
   --color-border: #E5E2D9;
   --color-soft-gray: #ECEAE3;
   --color-btn-bg: #EAE8DF;
-  
+
   --color-active-sidebar: #242424;
   --color-active-sidebar-text: #FFFFFF;
-  
+
   --radius-card: 14px;
   --radius-btn: 8px;
   --radius-badge: 6px;
@@ -31,12 +30,21 @@
   --radius-icon: 10px;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  
+
   box-sizing: border-box;
 }
 
 *, *:before, *:after {
   box-sizing: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover, a:focus, a:active, a:visited {
+  text-decoration: none;
 }
 
 body {
@@ -49,14 +57,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* App Layout */
 .app-container {
   display: flex;
   min-height: 100vh;
   width: 100%;
 }
 
-/* Sidebar Styling */
 .sidebar {
   width: 250px;
   background-color: var(--color-bg-sidebar);
@@ -70,7 +76,7 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;  
+  gap: 10px;
   margin-bottom: 32px;
 }
 
@@ -133,6 +139,11 @@ body {
   gap: 4px;
 }
 
+.nav-list a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -145,6 +156,19 @@ body {
   transition: all 0.15s ease;
   position: relative;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-item:hover,
+.nav-item:focus,
+.nav-item:active,
+.nav-item:visited {
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background-color: var(--color-soft-gray);
+  color: var(--color-text-primary);
 }
 
 .nav-item-icon {
@@ -227,7 +251,6 @@ body {
   color: var(--color-text-secondary);
 }
 
-/* Main Content Layout */
 .main-content {
   flex-grow: 1;
   padding: 32px 48px;
@@ -237,7 +260,6 @@ body {
   flex-direction: column;
 }
 
-/* Pages Styling */
 .page-dashboard, .page-tasks {
   max-width: 1140px;
   margin: 0 auto;
@@ -295,7 +317,6 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Stat Cards */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -331,7 +352,6 @@ body {
   line-height: 1.1;
 }
 
-/* Dashboard Grid 2-Column Overview */
 .dashboard-grid-row {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -513,7 +533,6 @@ body {
   margin: 0;
 }
 
-/* Section Layouts */
 .dashboard-section, .tasks-section {
   display: flex;
   flex-direction: column;
@@ -563,7 +582,6 @@ body {
   opacity: 0.7;
 }
 
-/* Task Grid / Lists */
 .task-preview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -576,7 +594,6 @@ body {
   gap: 10px;
 }
 
-/* Task Card Component */
 .task-card {
   background-color: var(--color-bg-card);
   border: 1px solid var(--color-border);
@@ -615,7 +632,6 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Priority Badge Variations */
 .priority-high {
   background-color: var(--color-error-bg);
   color: var(--color-error);
@@ -631,7 +647,6 @@ body {
   color: var(--color-success);
 }
 
-/* Status & Deadline Badge Variations */
 .status-completed {
   background-color: var(--color-success-bg);
   color: var(--color-text-primary);
@@ -700,7 +715,6 @@ body {
   color: var(--color-text-secondary);
 }
 
-/* Tasks Page Specific Layout */
 .tasks-layout {
   display: grid;
   grid-template-columns: 1.7fr 1.1fr;
@@ -719,7 +733,6 @@ body {
   top: 24px;
 }
 
-/* Task Form Shell Styling */
 .task-form-container {
   background-color: var(--color-bg-card);
   border: 1px solid var(--color-border);
@@ -753,7 +766,7 @@ body {
   color: var(--color-text-secondary);
 }
 
-.form-group input, 
+.form-group input,
 .form-group select {
   font-family: inherit;
   font-size: 12.5px;
@@ -851,7 +864,6 @@ body {
   margin: 0;
 }
 
-/* Interactive Task Card and Completion Actions */
 .task-card.completed {
   opacity: 0.7;
 }
@@ -909,12 +921,11 @@ body {
   color: var(--color-text-secondary);
 }
 
-/* Responsive Styling */
 @media (max-width: 1024px) {
   .tasks-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .tasks-sidebar-content {
     position: static;
   }
@@ -932,47 +943,47 @@ body {
   .app-container {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--color-border);
     padding: 16px 16px;
   }
-  
+
   .sidebar-brand {
     margin-bottom: 14px;
   }
-  
+
   .sidebar-nav {
     flex-direction: row;
     justify-content: space-between;
     gap: 12px;
   }
-  
+
   .nav-group-title {
     display: none;
   }
-  
+
   .nav-list {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 6px;
   }
-  
+
   .nav-item {
     padding: 6px 10px;
     font-size: 12px;
   }
-  
+
   .sidebar-footer {
     display: none;
   }
-  
+
   .main-content {
     padding: 20px 16px;
   }
-  
+
   .page-title {
     font-size: 22px;
   }
@@ -980,6 +991,406 @@ body {
   .stats-row {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+  }
+}
+
+.reminders-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.reminders-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-number.stat-highlight-high {
+  color: var(--color-error);
+}
+
+.stat-number.stat-highlight-completed {
+  color: #2E6930;
+}
+
+.reminders-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.reminders-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.reminders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reminder-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reminder-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 20px -2px rgba(36, 36, 36, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.reminder-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(36, 36, 36, 0.06);
+}
+
+.reminder-card-completed {
+  opacity: 0.78;
+  background-color: #FAFAF8;
+}
+
+.reminder-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.reminder-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reminder-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-badge);
+  letter-spacing: 0.02em;
+}
+
+.badge-priority-high {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.badge-priority-medium {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.badge-priority-low {
+  background-color: var(--color-soft-gray);
+  color: var(--color-text-secondary);
+}
+
+.reminder-category-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  background-color: var(--color-soft-gray);
+  color: var(--color-text-secondary);
+}
+
+.reminder-status-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+}
+
+.reminder-status-pill.status-completed {
+  background-color: #EAF3EC;
+  color: #2E6930;
+}
+
+.reminder-status-pill.status-pending {
+  background-color: var(--color-soft-gray);
+  color: var(--color-text-secondary);
+}
+
+.reminder-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.reminder-card-completed .reminder-title {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+.reminder-card-footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reminder-date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reminder-date-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.reminder-date-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.reminder-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.reminder-action-button {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.reminder-toggle-button {
+  border: 1px solid var(--color-text-primary);
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+}
+
+.reminder-toggle-button:hover {
+  background-color: #383838;
+}
+
+.reminder-delete-button {
+  border: 1px solid var(--color-error);
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.reminder-delete-button:hover {
+  background-color: var(--color-error);
+  color: #FFFFFF;
+}
+
+.reminders-empty-state {
+  background-color: var(--color-bg-card);
+  border: 1px dashed var(--color-border);
+  border-radius: 20px;
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.empty-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.reminders-aside-column {
+  position: sticky;
+  top: 44px;
+}
+
+.reminder-form-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 20px -2px rgba(36, 36, 36, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-heading {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.form-subheading {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: -12px 0 4px 0;
+  line-height: 1.4;
+}
+
+.reminder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.required-star {
+  color: var(--color-error);
+}
+
+.form-input,
+.form-select {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--color-text-primary);
+  background-color: #FFFFFF;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-submit-reminder {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: var(--radius-btn);
+  border: none;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  margin-top: 6px;
+}
+
+.btn-submit-reminder:hover {
+  background-color: #383838;
+}
+
+.btn-submit-reminder:active {
+  transform: scale(0.99);
+}
+
+.notfound-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.notfound-content {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 48px 28px;
+  text-align: center;
+  box-shadow: 0 4px 20px -2px rgba(36, 36, 36, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+.notfound-content p {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.notfound-link {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: var(--radius-btn);
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.notfound-link:hover {
+  background-color: #383838;
+}
+
+.notfound-link:active {
+  transform: scale(0.99);
+}
+
+@media (max-width: 1100px) {
+  .reminders-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reminders-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .reminders-aside-column {
+    position: static;
   }
 }
 

@@ -21,7 +21,7 @@ function Tasks({ tasks, onToggleComplete, onAddTask, onDeleteTask }) {
       </header>
 
       <div className="tasks-layout">
-        {/* Main List Column */}
+
         <main className="tasks-main-content">
           <section className="tasks-section">
             <div className="section-header">
@@ -29,10 +29,10 @@ function Tasks({ tasks, onToggleComplete, onAddTask, onDeleteTask }) {
               <p className="section-desc">A complete list of your personal tasks</p>
             </div>
             {tasks.length > 0 ? (
-              <TaskList 
-                tasks={tasks} 
-                onToggleComplete={onToggleComplete} 
-                onDeleteTask={onDeleteTask} 
+              <TaskList
+                tasks={tasks}
+                onToggleComplete={onToggleComplete}
+                onDeleteTask={onDeleteTask}
               />
             ) : (
               <div className="empty-tasks-card">
@@ -42,7 +42,6 @@ function Tasks({ tasks, onToggleComplete, onAddTask, onDeleteTask }) {
           </section>
         </main>
 
-        {/* Sidebar Form Column */}
         <aside className="tasks-sidebar-content">
           <TaskForm onAddTask={onAddTask} />
         </aside>

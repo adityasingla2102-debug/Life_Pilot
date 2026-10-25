@@ -43,7 +43,7 @@ function TaskCard({ task, onToggleComplete, onDeleteTask }) {
           <span className={`task-badge ${deadlineClass}`}>{deadlineLabel}</span>
         </div>
       </div>
-      
+
       <div className="task-details">
         <div className="task-detail-item">
           <span className="detail-label">Category</span>
@@ -58,8 +58,8 @@ function TaskCard({ task, onToggleComplete, onDeleteTask }) {
       {(onToggleComplete || onDeleteTask) && (
         <div className="task-card-actions">
           {onDeleteTask && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-task-delete"
               onClick={() => onDeleteTask(task.id)}
             >
@@ -68,8 +68,8 @@ function TaskCard({ task, onToggleComplete, onDeleteTask }) {
           )}
 
           {onToggleComplete && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={`btn-task-toggle ${task.completed ? 'completed' : 'pending'}`}
               onClick={() => onToggleComplete(task.id)}
             >
@@ -83,5 +83,4 @@ function TaskCard({ task, onToggleComplete, onDeleteTask }) {
 }
 
 export default TaskCard;
-
 

@@ -14,7 +14,6 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
     progressPercentage = Math.round((completedTasks / totalTasks) * 100);
   }
 
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -46,7 +45,6 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
         </div>
       </header>
 
-      {/* Metrics Row */}
       <section className="stats-row">
         <StatCard number={totalTasks} label="Total Tasks" />
         <StatCard number={completedTasks} label="Completed" />
@@ -54,7 +52,6 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
         <StatCard number={highPriorityTasks} label="High Priority" />
       </section>
 
-      {/* 2-Column Overview Section: Progress + Deadline Notification Panel */}
       <section className="dashboard-grid-row">
         <div className="dashboard-card progress-card">
           <div className="card-header-compact">
@@ -66,7 +63,7 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
           </div>
 
           <div className="progress-bar-container">
-            <div 
+            <div
               className="progress-bar-fill"
               style={{ width: `${progressPercentage}%` }}
             ></div>
@@ -82,7 +79,6 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
           </div>
         </div>
 
-        {/* In-App Deadline Notification Panel */}
         <div className="dashboard-card notification-card">
           <div className="card-header-compact">
             <div>
@@ -137,8 +133,8 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
             <p className="section-desc">Recent personal responsibilities requiring attention</p>
           </div>
           {onNavigate && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-link-action"
               onClick={() => onNavigate('tasks')}
             >
@@ -146,11 +142,11 @@ function Dashboard({ tasks, onToggleComplete, onDeleteTask, onNavigate }) {
             </button>
           )}
         </div>
-        
+
         {previewTasks.length > 0 ? (
           <div className="task-preview-grid">
             {previewTasks.map(task => (
-              <TaskCard 
+              <TaskCard
                 key={task.id}
                 task={task}
                 onToggleComplete={onToggleComplete}

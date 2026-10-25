@@ -74,10 +74,10 @@ function TaskForm({ onAddTask }) {
       <form className="task-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="task-title-input">Task Title</label>
-          <input 
-            type="text" 
-            id="task-title-input" 
-            placeholder="e.g. Renew car insurance" 
+          <input
+            type="text"
+            id="task-title-input"
+            placeholder="e.g. Renew car insurance"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -86,8 +86,8 @@ function TaskForm({ onAddTask }) {
 
         <div className="form-group">
           <label htmlFor="task-category-select">Category</label>
-          <select 
-            id="task-category-select" 
+          <select
+            id="task-category-select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
@@ -100,15 +100,15 @@ function TaskForm({ onAddTask }) {
         </div>
 
         <div className="category-add-row">
-          <input 
-            type="text" 
-            placeholder="New custom category..." 
+          <input
+            type="text"
+            placeholder="New custom category..."
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
             className="category-add-input"
           />
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn-add-category"
             onClick={handleAddCategory}
           >
@@ -119,8 +119,8 @@ function TaskForm({ onAddTask }) {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="task-priority-select">Priority</label>
-            <select 
-              id="task-priority-select" 
+            <select
+              id="task-priority-select"
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
               required
@@ -134,9 +134,9 @@ function TaskForm({ onAddTask }) {
 
           <div className="form-group">
             <label htmlFor="task-date-input">Due Date</label>
-            <input 
-              type="date" 
-              id="task-date-input" 
+            <input
+              type="date"
+              id="task-date-input"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               required

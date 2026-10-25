@@ -4,7 +4,7 @@ function TaskList({ tasks, onToggleComplete, onDeleteTask }) {
   return (
     <div className="task-list-grid">
       {tasks.map(task => (
-        <TaskCard 
+        <TaskCard
           key={task.id}
           task={task}
           onToggleComplete={onToggleComplete}
