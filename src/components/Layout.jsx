@@ -1,6 +1,7 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 
 function Layout() {
+  const location = useLocation();
   const navigationItems = [
     {
       label: 'Dashboard',
@@ -171,14 +172,14 @@ function Layout() {
                     className={({ isActive }) => {
                       const isAliasActive =
                         item.alias &&
-                        window.location.pathname === item.alias;
+                        location.pathname === item.alias;
                       return `nav-item ${isActive || isAliasActive ? 'active' : ''}`;
                     }}
                   >
                     {({ isActive }) => {
                       const isAliasActive =
                         item.alias &&
-                        window.location.pathname === item.alias;
+                        location.pathname === item.alias;
                       const active = isActive || isAliasActive;
                       return (
                         <>
